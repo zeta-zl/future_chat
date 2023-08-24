@@ -1,6 +1,6 @@
 #include "database_operations.h"
 
-#include <atlstr.h>
+
 
 #if defined(_WIN32) || defined(_MSC_VER) 
 #include <Windows.h>
@@ -39,6 +39,8 @@ void SelectResult::executeSelect( sqlite3* db, string sql ) {
             }
         }
     }
+
+    if ( gb_string ) delete[] gb_string;
 }
 
 void SelectResult::check_result() {
@@ -106,6 +108,7 @@ void SQLResult::executeSQL( sqlite3* db, const char* sql ) {
     if ( this->error_mes != nullptr ) {
         sqlite3_free( this->error_mes );
     }
+    //printf( "char* sql:%s\n", sql );
     for ( int tryed_times = 0; tryed_times < MAX_BUSY_HANDLE_TIME; tryed_times++ ) {
         this->error_code = sqlite3_exec( db, sql, 0, 0, &(this->error_mes) );
 
@@ -113,15 +116,17 @@ void SQLResult::executeSQL( sqlite3* db, const char* sql ) {
             break;
         }
         else {
-            Sleep( 10 );
+            __sleep( 10 );
             continue;
         }
     }
 }
 
 void SQLResult::executeSQL( sqlite3* db, string sql ) {
+    //cout <<"\nstring: "<< sql << endl;
     char* gb_string = U2G( sql.c_str() );
     this->executeSQL( db, gb_string );
+    if ( gb_string ) delete[] gb_string;
 }
 
 //用于批量执行SQL语句
@@ -143,31 +148,7 @@ void SQLResult::batch_executeSQL( sqlite3* db, vector<const char*> sql ) {
     }
 }
 
-char* SQLResult::U2G( const char* utf8 ) {
-    int len = MultiByteToWideChar( CP_UTF8, 0, utf8, -1, NULL, 0 );
-    wchar_t* wstr = new wchar_t[len + 1];
-    memset( wstr, 0, len + 1 );
-    MultiByteToWideChar( CP_UTF8, 0, utf8, -1, wstr, len );
-    len = WideCharToMultiByte( CP_ACP, 0, wstr, -1, NULL, 0, NULL, NULL );
-    char* str = new char[len + 1];
-    memset( str, 0, len + 1 );
-    WideCharToMultiByte( CP_ACP, 0, wstr, -1, str, len, NULL, NULL );
-    if ( wstr ) delete[] wstr;
-    return str;
-}
 
-char* SQLResult::G2U( const char* gb2312 ) {
-    int len = MultiByteToWideChar( CP_ACP, 0, gb2312, -1, NULL, 0 );
-    wchar_t* wstr = new wchar_t[len + 1];
-    memset( wstr, 0, len + 1 );
-    MultiByteToWideChar( CP_ACP, 0, gb2312, -1, wstr, len );
-    len = WideCharToMultiByte( CP_UTF8, 0, wstr, -1, NULL, 0, NULL, NULL );
-    char* str = new char[len + 1];
-    memset( str, 0, len + 1 );
-    WideCharToMultiByte( CP_UTF8, 0, wstr, -1, str, len, NULL, NULL );
-    if ( wstr ) delete[] wstr;
-    return str;
-}
 
 
 

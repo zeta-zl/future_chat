@@ -7,8 +7,12 @@
 
 
 #### 初始化
-数据库已经上传,在`/database/database_files`中的`future_chat.db`即是数据库文件  
-若已删除,可以运行`init_databast.cpp`重新生成
+1. sqlite:需要下载sqlite,在命令行中输入`sudo apt-get install libsqlite3-dev
+`  
+2. 数据库路径: 使用相对路径
+3. 数据库:数据库已经上传,在`/database/database_files`中的`future_chat.db`即是数据库文件  
+        若已删除,可以取消`init_database.cpp`的注释，注释`test_database.cpp`后运行`make init_database`，也可以直接运行编辑好的`init_database`  
+4. 测试: 编译并运行`test_database`以确定配置完成
 
 #### 使用
 使用步骤:  

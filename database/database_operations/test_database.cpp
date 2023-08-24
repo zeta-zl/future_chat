@@ -1,11 +1,11 @@
-#define _CRT_SECURE_NO_WARNINGS
+﻿#define _CRT_SECURE_NO_WARNINGS
 #include <bits/stdc++.h>  
 #include "../sqlite_functions/sqlite3.h"
 #include "./database_operations.h"
 
 using namespace std;
 
-string db_path = "./database_files/furure_chat.db";
+string db_path = "./database/database_files/furure_chat.db"; 
 
 
 int main( int argc, char* argv[] ) {

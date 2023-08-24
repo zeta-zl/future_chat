@@ -31,6 +31,7 @@ public:
     void executeSQL( sqlite3* db, string sql );
     void batch_executeSQL( sqlite3* db, vector<string> sql );
 };
+
 class InsertResult : private SQLResult {
 private:
 public:
@@ -92,3 +93,5 @@ public:
         return this->db;
     }
 };
+
+void __sleep(int a);
