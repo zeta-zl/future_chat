@@ -6,6 +6,7 @@
 #include <QJsonObject>
 #include <QJsonDocument>
 #include <QShortcut>
+#include <QDateTime>
 
 Widget::Widget(QWidget *parent, QString f_targetname, int f_targetid, QString f_clientname, int f_clientid)
     : QWidget(parent)
@@ -27,7 +28,12 @@ Widget::Widget(QWidget *parent, QString f_targetname, int f_targetid, QString f_
     start();
     connect(m_tcp,&QTcpSocket::readyRead,this,[=](){
         QByteArray data = m_tcp->readAll();
-        ui->TextRecord->append("服务器:"+data);
+        QJsonDocument jsonDoc = QJsonDocument::fromJson(data);
+        QJsonObject jsonData = jsonDoc.object();
+        QString clientname = jsonData["client_name"].toString();
+        QString msg = jsonData["message"].toString();
+        QString time = jsonData["timestamp"].toString();
+        ui->TextRecord->append(clientname+" "+time+":\n"+msg);
     });
 }
 
@@ -48,6 +54,9 @@ void Widget::on_sendBtn_clicked()
         QMessageBox::warning(this,"警告","发送内容不能为空");
         return;
     }
+    // 获取当前时间并格式化为字符串
+    QDateTime currentTime = QDateTime::currentDateTime();
+    QString formattedTime = currentTime.toString("yyyy-MM-dd HH:mm:ss");
     //创建 JSON 数据串
     QJsonObject jsonData;
     jsonData["client_id"] = clientid;
@@ -55,6 +64,7 @@ void Widget::on_sendBtn_clicked()
     jsonData["target_client_id"] = targetid;
     jsonData["target_client_name"] = targetname;
     jsonData["message"] = msg;
+    jsonData["timestamp"] = formattedTime;
 
     // 将 JSON 数据转换为字符串
     QJsonDocument jsonDoc(jsonData);
@@ -62,7 +72,7 @@ void Widget::on_sendBtn_clicked()
 
     // 传输 JSON 字符串
     m_tcp->write(jsonString.toUtf8());
-    ui->TextRecord->append(targetname+":"+msg);
+    ui->TextRecord->append(clientname+" "+formattedTime+":\n"+msg);
     ui->msgTextEdit->clear();
     ui->msgTextEdit->setFocus();
 }
@@ -75,6 +85,9 @@ void Widget::on_backBtn_clicked()
 void Widget::start(){
     //向服务器传递id name msg
     QString msg = "start client";
+    // 获取当前时间并格式化为字符串
+    QDateTime currentTime = QDateTime::currentDateTime();
+    QString formattedTime = currentTime.toString("yyyy-MM-dd HH:mm:ss");
     //创建 JSON 数据串
     QJsonObject jsonData;
     jsonData["client_id"] = clientid;
@@ -82,6 +95,8 @@ void Widget::start(){
     jsonData["target_client_id"] = targetid;
     jsonData["target_client_name"] = targetname;
     jsonData["message"] = msg;
+    jsonData["timestamp"] = formattedTime;
+
     // 将 JSON 数据转换为字符串
     QJsonDocument jsonDoc(jsonData);
     QString jsonString = jsonDoc.toJson(QJsonDocument::Compact);
