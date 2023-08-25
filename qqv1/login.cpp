@@ -3,6 +3,8 @@
 #include "widget.h"
 #include <QIcon>
 #include <QToolButton>
+#include <QMap>
+
 login::login(QString name, int id, QWidget *parent) :
     QWidget(parent),
     ui(new Ui::login)
@@ -16,7 +18,8 @@ login::login(QString name, int id, QWidget *parent) :
     // 设置名称
     this->setWindowTitle("mychat");
     QVector< QToolButton *> toolbuttons;
-    QVector< Widget *> widgetlist;
+    //QVector< Widget *> widgetlist;
+    QMap<int, Widget *> widgetmap;
     for (int i=0;i<9;i++) {
       QToolButton *btn = new QToolButton(this);
       //加载图标
@@ -37,10 +40,10 @@ login::login(QString name, int id, QWidget *parent) :
     };
     for(int i=0;i<9;i++){
       connect(toolbuttons[i],&QToolButton::clicked,
-              [=,&widgetlist](){
+              [=]()mutable{
           if(IsShow[i]){
-              widgetlist[i]->showNormal();
-              widgetlist[i]->activateWindow();
+              widgetmap[i]->showNormal();
+              widgetmap[i]->activateWindow();
               return;
           }
           // 传入id 唯一标识符
@@ -48,7 +51,8 @@ login::login(QString name, int id, QWidget *parent) :
           widget->setWindowIcon(toolbuttons[i]->icon());
           widget->setWindowTitle(toolbuttons[i]->text());
           widget->show();
-          widgetlist.push_back(widget);
+          //widgetlist.push_back(widget);
+          widgetmap.insert(i,widget);
           IsShow[i] = true;
           connect(widget,&Widget::closeWidget,this,[=]{
               IsShow[i]=false;
