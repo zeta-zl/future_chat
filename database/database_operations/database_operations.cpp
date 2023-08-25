@@ -185,3 +185,43 @@ void DataBase::initialize( const char* path ) {
 DataBase::~DataBase() {
     sqlite3_close( this->db );
 }
+
+void save_downloaded_data_to_database( DataBase& db, InsertResult& i_res, SelectResult& s_res, string table_name ) {
+    vector<string> sql_list;
+
+    // 使用格式化字符串生成插入 SQL 语句并添加到 sql_list 中
+    for ( int i = 0; i < s_res.row; ++i ) {
+
+        stringstream sqlStream;
+        sqlStream << "INSERT INTO " << table_name << " VALUES (";
+        for ( int j = 0; j < s_res.column; j++ ) {
+            if ( j > 0 ) {
+                sqlStream << ",";
+            }
+            sqlStream << "'" << s_res.data[i][j] << "'";
+        }
+        sqlStream << ")";
+        sql_list.push_back( sqlStream.str() );
+
+    }
+    i_res.batch_executeInsert( db, sql_list );
+
+}
+
+vector<vector<string>> convert_select_result_to_vector( SelectResult& s_res ) {
+    vector<vector<string>> temp( s_res.row, vector<string>( s_res.column ) );
+    for ( int i = 0; i < s_res.row; i++ ) {
+        for ( int j = 0; j < s_res.column; j++ ) {
+            temp[i][j] = s_res.data[i][j];
+        }
+    }
+    return temp;
+}
+
+vector<vector<string>> get_all_data_from_table( DataBase db, string table_name ) {
+    SelectResult s_res = SelectResult();
+    string sql = "select * from " + table_name;
+    s_res.executeSelect( db, sql );
+    return convert_select_result_to_vector( s_res );
+}
+

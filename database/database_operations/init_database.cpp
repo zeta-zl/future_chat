@@ -18,7 +18,6 @@
 //);\
 //CREATE TABLE IF NOT EXISTS friend_library (\
 //account INT PRIMARY KEY,\
-//profile_image_path VARCHAR( 255 )\
 //);\
 //CREATE TABLE IF NOT EXISTS user_info (\
 //account INT PRIMARY KEY,\

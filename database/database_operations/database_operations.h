@@ -56,7 +56,7 @@ public:
     void check_result();
 };
 
-class SelectResult : public SQLResult {
+class SelectResult : private SQLResult {
 private:
 public:
     int column = 0;//列数
@@ -70,7 +70,6 @@ public:
         }
         delete[] this->data;
     }
-
     void executeSelect( sqlite3* db, string sql );
     void check_result();
 };
@@ -95,3 +94,11 @@ public:
 };
 
 void __sleep(int a);
+
+//用于将下载下来的数据(SelectResult)存入本地
+void save_downloaded_data_to_database( DataBase& db, InsertResult& i_res, SelectResult& s_res, string table_name );
+
+
+
+vector<vector<string>> convert_select_result_to_vector( SelectResult& s_res );
+vector<vector<string>> get_all_data_from_table( DataBase db, string table_name );
