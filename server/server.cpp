@@ -38,18 +38,17 @@ void server::s_setListener(){
 void server::handleNewConnection(){
     QTcpSocket *newClientSocket = m_s->nextPendingConnection();
     qDebug()<<"Client connected";
-    int id=0;
     //检测是否可以接受数据
-    connect(newClientSocket,&QTcpSocket::readyRead,this,[=]()mutable{id=handleReadyRead(newClientSocket);});
+    connect(newClientSocket,&QTcpSocket::readyRead,this,[=](){handleReadyRead(newClientSocket);});
     // 存储服务器对客户端的socket
-    clientSockets.insert(id, newClientSocket);
-    connect(newClientSocket, &QTcpSocket::disconnected, this, [=](){handleDisconnected(id);});
+    clientSockets.append(newClientSocket);
+    qDebug()<<"服务器端接口数量："<<clientSockets.size();
 }
 
-int server::handleReadyRead(QTcpSocket *newClientSocket)
+void server::handleReadyRead(QTcpSocket *newClientSocket)
 {
     QTcpSocket *clientSocket = qobject_cast<QTcpSocket*>(sender());
-    int id;
+    qDebug()<<"客户端接口"<<clientSocket;
     while (newClientSocket->bytesAvailable()) {
             QByteArray data = newClientSocket->readAll();
             // 将接收到的 JSON 数据解析为对象
@@ -60,10 +59,18 @@ int server::handleReadyRead(QTcpSocket *newClientSocket)
                 int client_id = jsonData["client_id"].toInt();
                 int target_client_id = jsonData["target_client_id"].toInt();
                 QString message = jsonData["message"].toString();
-                id = client_id;
 
-                // 存储客户端连接
-                if (!m_clientMap.contains(client_id)){
+                if (m_clientMap.contains(client_id) && m_clientMap.value(client_id)!= clientSocket)
+                {
+                    // 如果之前已经存储过这个 client_id 的连接且客户端接口变化，替换为新的连接
+                    QTcpSocket *oldClientSocket = m_clientMap.value(client_id);
+                    oldClientSocket->deleteLater(); // 关闭并删除之前的连接
+                    m_clientMap[client_id] = clientSocket; // 存储新的连接
+                    qDebug()<<client_id<<"clientSocket已修改";
+                }
+                else if (!m_clientMap.contains(client_id))
+                {
+                    // 如果之前没有存储过这个 client_id 的连接，直接存储新的连接
                     m_clientMap.insert(client_id, clientSocket);
                     qDebug()<<client_id<<"clientSocket已存储";
                 }
@@ -73,7 +80,7 @@ int server::handleReadyRead(QTcpSocket *newClientSocket)
                 qDebug() << "Message:" << message;
 
                 if(message == "start client"){
-                    return id;
+                    return;
                 }
 
                 // 在此处可以根据目标客户 ID 发送消息给特定客户
@@ -81,34 +88,23 @@ int server::handleReadyRead(QTcpSocket *newClientSocket)
                 {
                     qDebug()<<"搜索到目标客户端";
                     QTcpSocket *targetSocket = m_clientMap.value(target_client_id);
+                    qDebug()<<targetSocket;
                     targetSocket->write(message.toUtf8()); // 发送消息
                 }
             }
         }
-    return id;
 }
 
-void server::handleDisconnected(int id){
-    cleanupClient(id);
-    cleanupServerSocket(id);
-}
 
-void server::cleanupClient(int client_id) {
-    if (m_clientMap.contains(client_id)) {
-        QTcpSocket *clientSocket = m_clientMap.value(client_id);
-        clientSocket->disconnectFromHost();
-        clientSocket->deleteLater(); // 清理资源
-        m_clientMap.remove(client_id);
-        qDebug() << "Client with ID" << client_id << "removed";
-    }
-}
 
-void server::cleanupServerSocket(int client_id){
-    if (clientSockets.contains(client_id)) {
-        QTcpSocket *clientSocket = clientSockets.value(client_id);
-        clientSocket->disconnectFromHost();
-        clientSocket->deleteLater(); // 清理资源
-        clientSockets.remove(client_id);
-        qDebug() << "ServerSocket with ID" << client_id << "removed";
-    }
-}
+
+
+//void server::cleanupServerSocket(int client_id){
+//    if (clientSockets.contains(client_id)) {
+//        QTcpSocket *clientSocket = clientSockets.value(client_id);
+//        clientSocket->disconnectFromHost();
+//        clientSocket->deleteLater(); // 清理资源
+//        clientSockets.remove(client_id);
+//        qDebug() << "ServerSocket with ID" << client_id << "removed";
+//    }
+//}

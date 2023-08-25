@@ -12,6 +12,8 @@ Widget::Widget(QWidget *parent, QString f_targetname, int f_targetid, QString f_
     , ui(new Ui::Widget)
 {
     ui->setupUi(this);
+    qDebug()<<"聊天窗启动";
+    setAttribute(Qt::WA_DeleteOnClose);
 
     targetname = f_targetname;
     targetid = f_targetid;
@@ -89,8 +91,10 @@ void Widget::start(){
 
 Widget::~Widget()
 {
+    qDebug()<<"chatwindow closed";
     delete ui;
-    emit chatWindowClosed(clientid);
+    m_tcp->close(); // 关闭连接，触发 disconnected 信号
+
 }
 
 

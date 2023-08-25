@@ -18,21 +18,17 @@ public:
     void s_setListener();
     void s_sendMsg(QString msg);
     void handleNewConnection();
-    int handleReadyRead(QTcpSocket *newClientSocket);
-    void cleanupClient(int clientid);
+    void handleReadyRead(QTcpSocket *newClientSocket);
     void cleanupServerSocket(int client_id);
-    void handleDisconnected(int id);
     ~server();
 
 private:
     Ui::server *ui;
     QTcpServer* m_s;
-    QMap<int, QTcpSocket*> clientSockets;  // 在服务器的头文件中定义一个私有成员变量来存储所有客户端的 QTcpSocket
+    //QMap<int, QTcpSocket*> clientSockets;  // 在服务器的头文件中定义一个私有成员变量来存储所有客户端的 QTcpSocket
+    QList <QTcpSocket*> clientSockets;
     int myport;
     QMap<int, QTcpSocket*> m_clientMap; // 存储客户端连接的哈希表
-
-//private slots:
-//    void handleChatWindowClosed(int client_id);
 };
 
 #endif // SERVER_H
