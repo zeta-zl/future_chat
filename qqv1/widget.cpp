@@ -109,7 +109,6 @@ Widget::~Widget()
     qDebug()<<"chatwindow closed";
     delete ui;
     m_tcp->close(); // 关闭连接，触发 disconnected 信号
-
 }
 
 
