@@ -10,12 +10,24 @@ login::login(QString name, int id, QWidget *parent) :
 {
     string db_path = "../database/database_files/furure_chat.db";
     DataBase db = DataBase(db_path);
-    vector<vector<string>> v_s_res = get_all_data_from_table( db, "user_info" );
-    for ( auto& i : v_s_res ) {
-        for ( auto& j : i ) {
-            qDebug() << j.c_str() << " ";
+//    vector<vector<string>> v_s_res = get_all_data_from_table( db, "user_info" );
+//    for ( auto& i : v_s_res ) {
+//        for ( auto& j : i ) {
+//            qDebug() << j.c_str() << " ";
+//        }
+//        qDebug() << endl;
+//    }
+    string sql;
+    sql = "select * from user_info";
+    auto s_res = SelectResult();
+    s_res.executeSelect( db, sql );
+    s_res.check_result();
+    cout<<s_res.row<<" "<<s_res.column<<endl;
+    for ( int i = 0; i < s_res.row; i++ ) {
+        for ( int j = 0; j < s_res.column; j++ ) {
+            cout << s_res.data[i][j] << " ";
         }
-        qDebug() << endl;
+        cout << endl;
     }
     ui->setupUi(this);
     clientname = name;
