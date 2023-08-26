@@ -56,7 +56,7 @@ public:
     void check_result();
 };
 
-class SelectResult : private SQLResult {
+class SelectResult : public SQLResult {
 private:
 public:
     int column = 0;//列数
@@ -78,9 +78,9 @@ public:
 class DataBase {
 private:
     sqlite3* db;
-    int is_valid = 0;
     void initialize( const char* path );
 public:
+    int is_valid = 0;
     ~DataBase();
     DataBase( string path ) {
         initialize( path.c_str() );

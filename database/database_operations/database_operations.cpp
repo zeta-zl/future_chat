@@ -1,5 +1,7 @@
 #include "database_operations.h"
-
+#include <QApplication>
+#include <qlogging.h>
+#include <qdebug.h>
 
 
 #if defined(_WIN32) || defined(_MSC_VER) 
@@ -16,16 +18,29 @@
 
 
 void SelectResult::executeSelect( sqlite3* db, string sql ) {
+    qDebug()<<sql.c_str();
     char* gb_string = this->U2G( sql.c_str() );
     if ( this->raw_data != nullptr ) {
         sqlite3_free_table( this->raw_data );
     }
-    this->error_code = sqlite3_get_table( db,
-        gb_string,
-        &this->raw_data,
-        &(this->row),
-        &(this->column),
-        &(this->error_mes) );
+    for(int i=0;i<MAX_BUSY_HANDLE_TIME;i++){
+        this->error_code = sqlite3_get_table( db,
+            gb_string,
+            &this->raw_data,
+            &(this->row),
+            &(this->column),
+            &(this->error_mes) );
+        if(this->error_code==SQLITE_OK){
+            break;
+        }
+        else {
+            __sleep( 10 );
+            qDebug()<<i;
+            continue;
+        }
+
+    }
+
 
     if ( this->error_code == SQLITE_OK ) {
         this->data = new
@@ -217,6 +232,7 @@ vector<vector<string>> convert_select_result_to_vector( SelectResult& s_res ) {
     }
     return temp;
 }
+
 
 vector<vector<string>> get_all_data_from_table( DataBase db, string table_name ) {
     SelectResult s_res = SelectResult();

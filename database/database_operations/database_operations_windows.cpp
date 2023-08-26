@@ -1,4 +1,4 @@
-#if defined(_WIN32) || defined(_MSC_VER) 
+#if defined(_WIN32__de) || defined(_MSC_VER__de) 
 #include <atlstr.h>
 #include "database_operations.h"
 
@@ -29,6 +29,31 @@ char* SQLResult::G2U( const char* gb2312 ) {
 }
 
 void __sleep(int a) {
+    Sleep( a );
+}
+
+#endif
+
+#if defined(_WIN32) || defined(_MSC_VER) 
+
+#include "database_operations.h"
+#include<Windows.h>
+
+char* SQLResult::U2G( const char* utf8 ) {
+    size_t length = strlen( utf8 );
+    char* newString = new char[length + 1]; // +1 用于存储字符串的结尾空字符
+    memcpy( newString, utf8, length + 1 );
+    return newString;
+}
+
+char* SQLResult::G2U( const char* gb2312 ) {
+    size_t length = strlen( gb2312 );
+    char* newString = new char[length + 1]; // +1 用于存储字符串的结尾空字符
+    memcpy( newString, gb2312, length + 1 );
+    return newString;
+}
+
+void __sleep( int a ) {
     Sleep( a );
 }
 
