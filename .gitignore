@@ -368,3 +368,5 @@ FodyWeavers.xsd
 *.sln
 *.vcxproj
 /database/database.vcxproj.filters
+/database/test.db
+/database/test1.db
