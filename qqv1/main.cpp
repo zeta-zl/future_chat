@@ -3,6 +3,7 @@
 #include "server.h"
 
 #include <QApplication>
+#include "../database/database_operations/database_operations.h"
 
 int main(int argc, char *argv[])
 {

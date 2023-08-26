@@ -18,11 +18,20 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
     login.cpp \
     main.cpp \
-    widget.cpp
+    widget.cpp \
+    ../database/database_operations/database_operations.cpp \
+    ../database/database_operations/database_operations_linux.cpp \
+    ../database/database_operations/database_operations_windows.cpp \
+    ../database/database_operations/init_database.cpp \
+    ../database/database_operations/test_database.cpp \
+    ../database/database_operations/test_database_operations.cpp \
+    ../database/sqlite_functions/sqlite3.c
 
 HEADERS += \
     login.h \
-    widget.h
+    widget.h \
+    ../database/database_operations/database_operations.h \
+    ../database/sqlite_functions/sqlite3.h
 
 FORMS += \
     login.ui \
@@ -37,3 +46,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 RESOURCES += \
     old.qrc \
     resource.qrc
+
+DISTFILES += \
+    ../database/database_files/furure_chat.db \
+    ../database/database_files/furure_chat_server.db
