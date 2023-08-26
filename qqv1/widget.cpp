@@ -21,7 +21,8 @@ Widget::Widget(QWidget *parent, QString f_targetname, int f_targetid, QString f_
     clientname = f_clientname;
     clientid = f_clientid;
     m_port=8899;
-    m_ip = "127.0.0.1";
+    m_ip = "172.27.208.1";
+
 
     m_tcp = new QTcpSocket(this);
     c_connectServer();
@@ -109,6 +110,7 @@ Widget::~Widget()
     qDebug()<<"chatwindow closed";
     delete ui;
     m_tcp->close(); // 关闭连接，触发 disconnected 信号
+
 }
 
 

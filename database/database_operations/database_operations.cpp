@@ -35,7 +35,7 @@ void SelectResult::executeSelect( sqlite3* db, string sql ) {
         }
         else {
             __sleep( 10 );
-            qDebug()<<i;
+            qDebug()<<i<<this->error_code;
             continue;
         }
 
@@ -186,7 +186,7 @@ void SQLResult::batch_executeSQL( sqlite3* db, vector<string> sql ) {
 }
 
 void DataBase::initialize( const char* path ) {
-    int rc = sqlite3_open( path, &db );
+    int rc = sqlite3_open16( path, &db );
     if ( rc ) {
         fprintf( stderr, "Can't open database: %s\n", sqlite3_errmsg( db ) );
         exit( 0 );
