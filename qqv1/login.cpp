@@ -4,12 +4,14 @@
 #include <QIcon>
 #include <QToolButton>
 #include "../database/database_operations/database_operations.h"
+
 login::login(QString name, int id, QWidget *parent) :
     QWidget(parent),
     ui(new Ui::login)
 {
-    string db_path = "../database/database_files/furure_chat.db";
+    string db_path = "test2.db";
     DataBase db = DataBase(db_path);
+
 //    vector<vector<string>> v_s_res = get_all_data_from_table( db, "user_info" );
 //    for ( auto& i : v_s_res ) {
 //        for ( auto& j : i ) {
@@ -19,6 +21,7 @@ login::login(QString name, int id, QWidget *parent) :
 //    }
     string sql;
     sql = "select * from user_info";
+    sql = "SELECT name FROM sqlite_master WHERE type='table' order by name";
     auto s_res = SelectResult();
     s_res.executeSelect( db, sql );
     s_res.check_result();

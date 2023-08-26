@@ -1,11 +1,11 @@
 //#define _CRT_SECURE_NO_WARNINGS
-//#include <bits/stdc++.h>  
+//#include <bits/stdc++.h>
 //#include "../sqlite_functions/sqlite3.h"
 //#include "./database_operations.h"
-//
+
 //using namespace std;
 //namespace {
-//    string db_path = "./database_files/furure_chat_server.db";
+//    string db_path = "../../database/database_files/furure_chat.db";
 //    string init_sql = "CREATE TABLE IF NOT EXISTS message_library ( \
 //    environment INT NOT NULL,\
 //    id INT NOT NULL,\
@@ -17,7 +17,7 @@
 //    PRIMARY KEY (environment, id)\
 //);\
 //CREATE TABLE IF NOT EXISTS friend_library (\
-//account INT PRIMARY KEY,\
+//account INT PRIMARY KEY\
 //);\
 //CREATE TABLE IF NOT EXISTS user_info (\
 //account INT PRIMARY KEY,\
@@ -39,7 +39,8 @@
 //CREATE TABLE IF NOT EXISTS group_chat (\
 //group_number INT PRIMARY KEY,\
 //name VARCHAR( 255 ),\
-//group_image_path VARCHAR( 255 ));";
+//group_image_path VARCHAR( 255 )\
+//);";
 //    string init_sql_server = "CREATE TABLE IF NOT EXISTS message_library ( \
 //    environment INT NOT NULL,\
 //    id INT NOT NULL,\
@@ -89,24 +90,25 @@
 //account INT PRIMARY KEY,\
 //ip VARCHAR( 255 ));\
 //";
-//    void init_database( DataBase& db ) {
-//        char* error_mes = nullptr;
-//        int error_code = sqlite3_exec( db, init_sql_server.c_str(), 0, 0, 0 );
-//        if ( error_code == SQLITE_OK ) {
-//            fprintf( stdout, "Init successed\n" );
-//        }
-//        else {
-//            fprintf( stderr, "Init failed: %s\n",error_mes );
-//        }
-//
+//void init_database( DataBase& db ) {
+//    char* error_mes = nullptr;
+//    int error_code = sqlite3_exec( db, init_sql.c_str(), 0, 0, &error_mes );
+//    if ( error_code == SQLITE_OK ) {
+//        fprintf( stdout, "Init successed\n" );
 //    }
+//    else {
+//        fprintf( stderr, "Init failed:%d %s\n", error_code, error_mes );
+//    }
+
 //}
-//
-//
-//
-//
+//}
+
+
+
+
 //int main( int argc, char* argv[] ) {
-//    DataBase db( db_path );
+//    string p = "future_chat.db";
+//    DataBase db( p );
 //    init_database( db );
 //    return 0;
 //}
