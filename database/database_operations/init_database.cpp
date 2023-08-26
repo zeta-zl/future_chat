@@ -1,8 +1,8 @@
 //#define _CRT_SECURE_NO_WARNINGS
-//#include <bits/stdc++.h>  
+//#include <bits/stdc++.h>
 //#include "../sqlite_functions/sqlite3.h"
 //#include "./database_operations.h"
-//
+
 //using namespace std;
 //namespace {
 //    string db_path = "./database_files/furure_chat_server.db";
@@ -98,13 +98,13 @@
 //        else {
 //            fprintf( stderr, "Init failed: %s\n",error_mes );
 //        }
-//
+
 //    }
 //}
-//
-//
-//
-//
+
+
+
+
 //int main( int argc, char* argv[] ) {
 //    DataBase db( db_path );
 //    init_database( db );

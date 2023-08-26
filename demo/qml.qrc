@@ -1,0 +1,11 @@
+<RCC>
+    <qresource prefix="/">
+        <file>LoginPage.qml</file>
+        <file>MainPage.qml</file>
+        <file>RegisterPage.qml</file>
+        <file>StartPage.qml</file>
+        <file>ChatPage.qml</file>
+    </qresource>
+    <qresource prefix="/images"/>
+    <qresource prefix="/123"/>
+</RCC>
