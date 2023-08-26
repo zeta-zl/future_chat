@@ -3,8 +3,6 @@
 #include "widget.h"
 #include <QIcon>
 #include <QToolButton>
-#include <QMap>
-
 login::login(QString name, int id, QWidget *parent) :
     QWidget(parent),
     ui(new Ui::login)
@@ -18,8 +16,7 @@ login::login(QString name, int id, QWidget *parent) :
     // 设置名称
     this->setWindowTitle("mychat");
     QVector< QToolButton *> toolbuttons;
-    //QVector< Widget *> widgetlist;
-    QMap<int, Widget *> widgetmap;
+    QVector< Widget *> widgetlist;
     for (int i=0;i<9;i++) {
       QToolButton *btn = new QToolButton(this);
       //加载图标
@@ -28,7 +25,7 @@ login::login(QString name, int id, QWidget *parent) :
       //设置图片大小
       btn->setIconSize(QPixmap(":/images/user_man.png").size());
       //设置网名
-      btn->setText(QString("user1"));
+      btn->setText(QString("qq v1 copy"));
       //设置透明
       btn->setAutoRaise(true);
       //设置显示格式
@@ -40,19 +37,19 @@ login::login(QString name, int id, QWidget *parent) :
     };
     for(int i=0;i<9;i++){
       connect(toolbuttons[i],&QToolButton::clicked,
-              [=]()mutable{
+              [=,&widgetlist](){
           if(IsShow[i]){
-              widgetmap[i]->showNormal();
-              widgetmap[i]->activateWindow();
+              widgetlist[i]->showNormal();
+              widgetlist[i]->activateWindow();
               return;
           }
           // 传入id 唯一标识符
-          Widget *widget = new Widget(nullptr,toolbuttons[i]->text(),2,"jieshou",1);
+          //Widget(QWidget *parent, QString targetname, int targetid, QString clientname, int clientid);
+          Widget *widget = new Widget(nullptr,toolbuttons[i]->text(),2,"qq v1",1);
           widget->setWindowIcon(toolbuttons[i]->icon());
           widget->setWindowTitle(toolbuttons[i]->text());
           widget->show();
-          //widgetlist.push_back(widget);
-          widgetmap.insert(i,widget);
+          widgetlist.push_back(widget);
           IsShow[i] = true;
           connect(widget,&Widget::closeWidget,this,[=]{
               IsShow[i]=false;

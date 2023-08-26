@@ -6,6 +6,8 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 
+//服务器端接口数量没有控制，未修复
+
 server::server(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::server)
