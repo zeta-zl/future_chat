@@ -362,7 +362,9 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 /build-qqv1-Desktop_Qt_5_12_2_MinGW_32_bit-Debug
-/database
 /qqv1
 /build-server-Desktop_Qt_5_12_2_MinGW_32_bit-Debug
 /server
+*.sln
+*.vcxproj
+/database/database.vcxproj.filters
