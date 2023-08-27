@@ -13,7 +13,7 @@ server::server(QWidget *parent) :
     ui(new Ui::server)
 {
     ui->setupUi(this);
-    myport = 8899;
+    myport = 9999;
     //创建监听的服务器对象
     m_s = new QTcpServer(this);
     s_setListener();
@@ -58,43 +58,17 @@ void server::handleReadyRead(QTcpSocket *newClientSocket)
             if (!jsonDoc.isNull() && jsonDoc.isObject())
             {
                 QJsonObject jsonData = jsonDoc.object();
-                int client_id = jsonData["client_id"].toInt();
-                int target_client_id = jsonData["target_client_id"].toInt();
-                QString message = jsonData["message"].toString();
-
-                if (m_clientMap.contains(client_id) && m_clientMap.value(client_id)!= clientSocket)
-                {
-                    // 如果之前已经存储过这个 client_id 的连接且客户端接口变化，替换为新的连接
-                    QTcpSocket *oldClientSocket = m_clientMap.value(client_id);
-                    oldClientSocket->deleteLater(); // 关闭并删除之前的连接
-                    m_clientMap[client_id] = clientSocket; // 存储新的连接
-                    qDebug()<<client_id<<"clientSocket已修改";
-                }
-                else if (!m_clientMap.contains(client_id))
-                {
-                    // 如果之前没有存储过这个 client_id 的连接，直接存储新的连接
-                    m_clientMap.insert(client_id, clientSocket);
-                    qDebug()<<client_id<<"clientSocket已存储";
-                }
-
-                qDebug() << "Client ID:" << client_id;
-                qDebug() << "Target Client ID:" << target_client_id;
-                qDebug() << "Message:" << message;
-
-                if(message == "start client"){
-                    return;
-                }
-
-                // 在此处可以根据目标客户 ID 发送消息给特定客户
-                if (m_clientMap.contains(target_client_id))
-                {
-                    qDebug()<<"搜索到目标客户端";
-                    QTcpSocket *targetSocket = m_clientMap.value(target_client_id);
-                    qDebug()<<targetSocket;
-                    targetSocket->write(message.toUtf8()); // 发送消息
-                }
+                //QString message = jsonData.toString();
+                qDebug()<<jsonData;
+                qDebug()<<jsonData["id"];
             }
         }
+//    QJsonObject jsonObj;
+//    jsonObj.insert("request","registerBack"); //反馈类型
+//    jsonObj.insert("id", 1); // 分配的id
+//    jsonObj.insert("result",false);//注册成功与否
+//    QString jsonstring=QJsonDocument(jsonObj).toJson();
+//    clientSocket->write(jsonstring);
 }
 
 

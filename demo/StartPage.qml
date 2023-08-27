@@ -11,6 +11,18 @@ FluWindow {
     width: 400
     height: 480
     title: qsTr("FutureChat")
+    objectName: "startPage_object"
+
+    // 登录信号
+    property string userid: ""
+    property string userpwd: ""
+    signal loginSignal(string userid, string userpwd)
+
+    // 注册信号
+    property string regname: ""
+    property string regpwd: ""
+    property string regpwd2: ""
+    signal regSignal(string regname, string regpwd)
 
     // Loader加载不同组件，实现切换页面的功能
     Loader{
@@ -27,6 +39,8 @@ FluWindow {
             height: 480
             //anchors.centerIn: parent
         }
+
+
     }
 
     // 3.注册-Component

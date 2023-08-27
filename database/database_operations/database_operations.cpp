@@ -18,6 +18,7 @@
 
 
 void SelectResult::executeSelect( sqlite3* db, string sql ) {
+    //sql = "select name from sqlite_master where type='table' order by name;";
     qDebug()<<sql.c_str();
     char* gb_string = this->U2G( sql.c_str() );
     if ( this->raw_data != nullptr ) {
@@ -35,7 +36,7 @@ void SelectResult::executeSelect( sqlite3* db, string sql ) {
         }
         else {
             __sleep( 10 );
-            qDebug()<<i<<this->error_code;
+            qDebug()<<i<<this->error_code<<this->error_mes;
             continue;
         }
 

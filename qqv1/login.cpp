@@ -9,7 +9,7 @@ login::login(QString name, int id, QWidget *parent) :
     QWidget(parent),
     ui(new Ui::login)
 {
-    string db_path = "test2.db";
+    string db_path = "future_chat.db";
     DataBase db = DataBase(db_path);
 
 //    vector<vector<string>> v_s_res = get_all_data_from_table( db, "user_info" );

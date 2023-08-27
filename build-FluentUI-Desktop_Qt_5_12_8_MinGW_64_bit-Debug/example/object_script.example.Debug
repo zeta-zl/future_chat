@@ -1,0 +1,12 @@
+debug/AppInfo.o
+debug/En.o
+debug/Lang.o
+debug/Zh.o
+debug/main.o
+debug/IPC.o
+debug/qrc_example.o
+debug/moc_En.o
+debug/moc_Lang.o
+debug/moc_Zh.o
+debug/moc_AppInfo.o
+debug/moc_IPC.o

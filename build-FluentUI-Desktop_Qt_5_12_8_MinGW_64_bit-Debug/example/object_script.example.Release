@@ -1,0 +1,12 @@
+release/AppInfo.o
+release/En.o
+release/Lang.o
+release/Zh.o
+release/main.o
+release/IPC.o
+release/qrc_example.o
+release/moc_En.o
+release/moc_Lang.o
+release/moc_Zh.o
+release/moc_AppInfo.o
+release/moc_IPC.o
