@@ -60,8 +60,15 @@ void server::handleReadyRead(QTcpSocket *newClientSocket)
                 QJsonObject jsonData = jsonDoc.object();
                 //QString message = jsonData.toString();
                 qDebug()<<jsonData;
+                qDebug()<<jsonData["id"];
             }
         }
+//    QJsonObject jsonObj;
+//    jsonObj.insert("request","registerBack"); //反馈类型
+//    jsonObj.insert("id", 1); // 分配的id
+//    jsonObj.insert("result",false);//注册成功与否
+//    QString jsonstring=QJsonDocument(jsonObj).toJson();
+//    clientSocket->write(jsonstring);
 }
 
 

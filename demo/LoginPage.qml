@@ -61,19 +61,20 @@ FluRectangle {
                 if(isNaN(inputid.text)){
                     console.log("输入非数字")
                     // 提醒用户只能输入纯数字账号
+                    showError("只能输入纯数字账号")
                 }else{
                     userid=inputid.text
                     userpwd=inputpwd.text
                     //发送登录信号
                     console.log(userid,userpwd,"登录")
                     loginSignal(userid,userpwd)
-                }
 
-                //点击登录按钮后需要的操作
-                var component = Qt.createComponent("MainPage.qml");
-                var win = component.createObject();
-                win.show();
-                startPage.visible = false;
+                    //点击登录按钮后需要的操作
+                    var component = Qt.createComponent("MainPage.qml");
+                    var win = component.createObject();
+                    win.show();
+                    startPage.visible = false;
+                }
             }
         }
 

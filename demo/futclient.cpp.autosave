@@ -34,13 +34,17 @@ void FutClient::sendmsg(QString msg){
 void FutClient::receivemsg(){
     connect(m_tcpsocket,&QTcpSocket::readyRead,this,[=](){
         QByteArray data = m_tcpsocket->readAll();
-        QString jsonString = QJsonDocument::fromJson(data).toJson();
-        parsecommand(jsonString);
+        QJsonDocument jsonDoc = QJsonDocument::fromJson(data);
+        parsecommand(jsonDoc);
     });
 }
 
-void FutClient::parsecommand(QString jsonstring){
-
+void FutClient::parsecommand(QJsonDocument jsonDoc){
+    QJsonObject jsonData = jsonDoc.object();
+    QString request = jsonData["request"].toString();
+    if (request=="loginBack"){
+        loginBack(jsonData);
+    }
 }
 
 //登录

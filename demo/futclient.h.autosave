@@ -19,7 +19,7 @@ public:
     FutClient(QQmlApplicationEngine *engine, QObject *parent);
     void sendmsg(QString msg);
     void receivemsg();
-    void parsecommand(QString jsonstring);
+    void parsecommand(QJsonDocument jsonDoc);
 
 private:
     //前端通信engine
