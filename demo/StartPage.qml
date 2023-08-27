@@ -4,6 +4,7 @@ import QtQuick.Controls 2.12
 import QtQuick.Layouts 1.12
 import Qt.labs.platform 1.0
 import FluentUI 1.0
+import QtQuick.Dialogs 1.2
 
 FluWindow {
     id:startPage
@@ -23,6 +24,7 @@ FluWindow {
     property string regpwd: ""
     property string regpwd2: ""
     signal regSignal(string regname, string regpwd)
+
 
     // Loader加载不同组件，实现切换页面的功能
     Loader{
@@ -50,6 +52,18 @@ FluWindow {
             width: 400
             height: 560
             //anchors.centerIn: parent
+        }
+    }
+
+    function loginBack(result){
+        var component = Qt.createComponent("MainPage.qml");
+        if(result){
+            //点击登录按钮后需要的操作
+            var win = component.createObject();
+            win.show();
+            startPage.visible = false;
+        }else{
+            // 失败窗口
         }
     }
 }

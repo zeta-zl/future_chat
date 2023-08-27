@@ -59,8 +59,16 @@ void server::handleReadyRead(QTcpSocket *newClientSocket)
             {
                 QJsonObject jsonData = jsonDoc.object();
                 //QString message = jsonData.toString();
-                qDebug()<<jsonData;
-                qDebug()<<jsonData["id"];
+                qDebug()<<jsonData["request"].toString();
+                if(jsonData["request"].toString()=="login"){
+                    qDebug()<<"正确启动";
+                    QJsonObject jsonObj;
+                    jsonObj.insert("request","loginBack"); //反馈类型
+                    jsonObj.insert("id", 1); // 分配的id
+                    jsonObj.insert("result",true);//注册成功与否
+                    QString jsonstring=QJsonDocument(jsonObj).toJson();
+                    clientSocket->write(jsonstring.toUtf8());
+                }
             }
         }
 //    QJsonObject jsonObj;

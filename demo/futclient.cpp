@@ -18,6 +18,8 @@ FutClient::FutClient(QQmlApplicationEngine *engine, QObject *parent)
     m_tcpsocket=new QTcpSocket(this);
     m_tcpsocket->connectToHost(QHostAddress(m_ip),m_port);
 
+    receivemsg();
+
     // 登录
     QObject::connect(root,SIGNAL(loginSignal(QString,QString)),this,SLOT(loginfunc(QString,QString)));
     // 注册
@@ -34,13 +36,19 @@ void FutClient::sendmsg(QString msg){
 void FutClient::receivemsg(){
     connect(m_tcpsocket,&QTcpSocket::readyRead,this,[=](){
         QByteArray data = m_tcpsocket->readAll();
-        QString jsonString = QJsonDocument::fromJson(data).toJson();
-        parsecommand(jsonString);
+        QJsonDocument jsonDoc = QJsonDocument::fromJson(data);
+        qDebug()<<"客户端已接收信息:"<<jsonDoc;
+        parsecommand(jsonDoc);
     });
 }
 
-void FutClient::parsecommand(QString jsonstring){
-
+void FutClient::parsecommand(QJsonDocument jsonDoc){
+    QJsonObject jsonData = jsonDoc.object();
+    QString request = jsonData["request"].toString();
+    qDebug()<<"parsecommand request:"<<request;
+    if (request=="loginBack"){
+        loginBack(jsonData);
+    }
 }
 
 //登录
@@ -51,6 +59,19 @@ void FutClient::loginfunc(QString id, QString pwd){
     jsonobj["password"]=pwd;
     QString jsonstring=QJsonDocument(jsonobj).toJson();
     sendmsg(jsonstring);
+    clientid=id.toInt();
+}
+
+void FutClient::loginBack(QJsonObject jsondata){
+    bool result=jsondata["result"].toBool();
+    if(!result){
+        clientid=-1;
+    }else{
+        //其他函数调用clientid
+    }
+    //调用QML函数
+    QVariant res;
+    QMetaObject::invokeMethod(root,"loginBack",Q_RETURN_ARG(QVariant,res),Q_ARG(QVariant,result));
 }
 
 //注册

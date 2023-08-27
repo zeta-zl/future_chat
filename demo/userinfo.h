@@ -27,8 +27,8 @@ public:
     void parse(QJsonObject jsonobject);
 
 private:
-    int m_id;
-    QString m_name;
+    int m_id=-1;
+    QString m_name="";
 
 signals:
     void idchanged();

@@ -67,13 +67,10 @@ FluRectangle {
                 regpwd2=pwd2.text
 
                 if(regpwd!=regpwd2){
-                    // 弹出两次密码不匹配提示框
                     showError("两次密码不匹配")
                 }else if(regname==""){
-                    // 弹出用户名不能为空提示框
                     showError("用户名不能为空")
                 }else if(regpwd==""){
-                    // 弹出密码不能为空提示框
                     showError("密码不能为空")
                 }else{
                     console.log(regname,regpwd,"注册")

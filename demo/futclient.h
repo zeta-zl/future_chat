@@ -19,7 +19,10 @@ public:
     FutClient(QQmlApplicationEngine *engine, QObject *parent);
     void sendmsg(QString msg);
     void receivemsg();
-    void parsecommand(QString jsonstring);
+    void parsecommand(QJsonDocument jsonDoc);
+
+    //c++ -> qml
+    void loginBack(QJsonObject jsondata);
 
 private:
     //前端通信engine
@@ -29,6 +32,8 @@ private:
     QTcpSocket* m_tcpsocket;
     quint16 m_port;
     QHostAddress m_ip;
+    //用户信息
+    int clientid=-1;
 
 private slots:
     void loginfunc(QString id,QString pwd);
