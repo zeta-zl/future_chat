@@ -39,7 +39,7 @@ private:
 private slots:
     void loginfunc(QString id,QString pwd);
     void regfunc(QString name,QString pwd);
-
+    void setHistoryfunc(int userid);
 
 };
 

@@ -11,9 +11,14 @@ FluWindow {
     width: 400
     height: 800
     title: qsTr("FutureChat")
+    objectName: "mainPage_object"
+
+    // 请求历史消息
+    signal requestHistoryMessage(int curuserid)
+
 
     ListModel {
-            id: friendModel
+            id: friendModel  
 
             // 用户名； 头像； 新消息内容； 新消息数量； 是否开启免打扰
             ListElement {
@@ -29,6 +34,10 @@ FluWindow {
                 username: "生于未来"; avatar: "images/test.png"; message: "大黄：[捂脸哭]";
                 newmsg: "100"; newmsgtime: "19:40"; isdonotdisturb: true
             }
+    }
+
+    function sendRequest() {
+      requestHistoryMessage(curuser.id);
     }
 
     ListView {

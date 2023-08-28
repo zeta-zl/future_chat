@@ -1,4 +1,5 @@
 #include "futclient.h"
+#include "userinfo.h"
 
 #include<QTcpSocket>
 #include<QString>
@@ -10,7 +11,6 @@ FutClient::FutClient(QQmlApplicationEngine *engine, QObject *parent)
     this->engine=engine;
     //Qt对象树结构,root是qml全局的根节点，root指向startpage
     this->root=engine->rootObjects().first();
-    qDebug() << "root class:" << root->metaObject()->className();
 
     //端口 ip
     quint16 m_port=9999;
@@ -24,6 +24,9 @@ FutClient::FutClient(QQmlApplicationEngine *engine, QObject *parent)
     QObject::connect(root,SIGNAL(loginSignal(QString,QString)),this,SLOT(loginfunc(QString,QString)));
     // 注册
     QObject::connect(root,SIGNAL(regSignal(QString,QString)),this,SLOT(regfunc(QString,QString)));
+    // 请求聊天历史记录，创建mainpage
+    // QObject* mainwindow=root->findChild<QObject*>("mainPage_object");
+    QObject::connect(root,SIGNAL(requestHistoryMessage(int)),this,SLOT(setHistoryfunc(int)));
 
 }
 
@@ -61,7 +64,6 @@ void FutClient::loginfunc(QString id, QString pwd){
     jsonobj["password"]=pwd;
     QString jsonstring=QJsonDocument(jsonobj).toJson();
     sendmsg(jsonstring);
-    clientid=id.toInt();
 }
 
 void FutClient::loginBack(QJsonObject jsondata){
@@ -69,7 +71,9 @@ void FutClient::loginBack(QJsonObject jsondata){
     if(!result){
         clientid=-1;
     }else{
+        int id=jsondata["id"].toInt();
         //其他函数调用clientid
+        clientid=id;
     }
     //调用QML函数
     QVariant res;
@@ -92,6 +96,11 @@ void FutClient::registerBack(QJsonObject jsondata){
     //调用QML函数
     QVariant res;
     QMetaObject::invokeMethod(root,"registerBack",Q_RETURN_ARG(QVariant,res),Q_ARG(QVariant,id));
+}
+
+//初始化历史消息界面
+void FutClient::setHistoryfunc(int userid){
+    qDebug()<<"setHistoryfunc"<<userid;
 }
 
 

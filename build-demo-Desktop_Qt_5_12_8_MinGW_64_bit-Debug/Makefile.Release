@@ -61,7 +61,9 @@ OBJECTS       = release/LoginPage.o \
 		release/moc_futclient.o \
 		release/moc_userinfo.o
 
-DIST          =  ..\demo\futclient.h \
+DIST          = GroupInfoPage.qml \
+		GroupInvitePage.qml \
+		GroupMemberPage.qml ..\demo\futclient.h \
 		..\demo\userinfo.h ..\demo\LoginPage.cpp \
 		..\demo\futclient.cpp \
 		..\demo\userinfo.cpp
@@ -464,7 +466,10 @@ release/LoginPage.o: ../demo/LoginPage.cpp D:/Qt5.12.8/5.12.8/mingw73_64/include
 		D:/Qt5.12.8/5.12.8/mingw73_64/include/QtNetwork/QTcpSocket \
 		D:/Qt5.12.8/5.12.8/mingw73_64/include/QtNetwork/qtcpsocket.h \
 		D:/Qt5.12.8/5.12.8/mingw73_64/include/QtCore/QDateTime \
-		D:/Qt5.12.8/5.12.8/mingw73_64/include/QtCore/qdatetime.h
+		D:/Qt5.12.8/5.12.8/mingw73_64/include/QtCore/qdatetime.h \
+		../demo/userinfo.h \
+		D:/Qt5.12.8/5.12.8/mingw73_64/include/QtNetwork/QUdpSocket \
+		D:/Qt5.12.8/5.12.8/mingw73_64/include/QtNetwork/qudpsocket.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o release\LoginPage.o ..\demo\LoginPage.cpp
 
 release/futclient.o: ../demo/futclient.cpp ../demo/futclient.h \
@@ -566,6 +571,9 @@ release/futclient.o: ../demo/futclient.cpp ../demo/futclient.h \
 		D:/Qt5.12.8/5.12.8/mingw73_64/include/QtQml/qqmlerror.h \
 		D:/Qt5.12.8/5.12.8/mingw73_64/include/QtCore/QDateTime \
 		D:/Qt5.12.8/5.12.8/mingw73_64/include/QtCore/qdatetime.h \
+		../demo/userinfo.h \
+		D:/Qt5.12.8/5.12.8/mingw73_64/include/QtNetwork/QUdpSocket \
+		D:/Qt5.12.8/5.12.8/mingw73_64/include/QtNetwork/qudpsocket.h \
 		D:/Qt5.12.8/5.12.8/mingw73_64/include/QtCore/QString \
 		D:/Qt5.12.8/5.12.8/mingw73_64/include/QtQuick/QQuickItem \
 		D:/Qt5.12.8/5.12.8/mingw73_64/include/QtQuick/qquickitem.h \

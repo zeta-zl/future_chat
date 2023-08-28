@@ -35,3 +35,8 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 HEADERS += \
     futclient.h \
     userinfo.h
+
+DISTFILES += \
+    GroupInfoPage.qml \
+    GroupInvitePage.qml \
+    GroupMemberPage.qml
