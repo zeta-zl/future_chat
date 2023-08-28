@@ -105,6 +105,22 @@ FluWindow {
             anchors.top: userName.bottom
             anchors.topMargin: 10
         }
+        FluIconButton {
+            iconSource: FluentIcons.Add
+            anchors.right: parent.right
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 10
+            anchors.rightMargin: 10
+            width: 30
+            height: 30
+            onClicked: {
+                mainLoader.source = "AddPage.qml";
+            }
+        }
+    }
+    Loader {
+        id : mainLoader
+
     }
 
     FluPivot {
