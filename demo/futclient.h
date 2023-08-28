@@ -24,6 +24,7 @@ public:
     //c++ -> qml
     void loginBack(QJsonObject jsondata);
     void registerBack(QJsonObject jsondata);
+    void addFriendBack(QJsonObject jsondata);
 
 private:
     //前端通信engine
@@ -39,6 +40,7 @@ private:
 private slots:
     void loginfunc(QString id,QString pwd);
     void regfunc(QString name,QString pwd);
+    void addFriendfunc(QString friendId, QString verificationInfo);
     void setHistoryfunc(int userid);
 
 };
