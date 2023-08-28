@@ -48,6 +48,8 @@ void FutClient::parsecommand(QJsonDocument jsonDoc){
     qDebug()<<"parsecommand request:"<<request;
     if (request=="loginBack"){
         loginBack(jsonData);
+    } else if(request=="registerBack"){
+        registerBack(jsonData);
     }
 }
 
@@ -76,7 +78,6 @@ void FutClient::loginBack(QJsonObject jsondata){
 
 //注册
 void FutClient::regfunc(QString name,QString pwd){
-        qDebug()<<"SIGNAL(regSignal(QString,QString))被唤起";
         QJsonObject jsonobj;
         jsonobj["request"]="register";
         jsonobj.insert("id",-1); //未注册用户发送的数据包ID默认为随机非正数，传一个随机负数就行
@@ -84,6 +85,13 @@ void FutClient::regfunc(QString name,QString pwd){
         jsonobj.insert("password",pwd);
         QString jsonstring=QJsonDocument(jsonobj).toJson();
         sendmsg(jsonstring);
+}
+
+void FutClient::registerBack(QJsonObject jsondata){
+    bool id=jsondata["id"].toInt();
+    //调用QML函数
+    QVariant res;
+    QMetaObject::invokeMethod(root,"registerBack",Q_RETURN_ARG(QVariant,res),Q_ARG(QVariant,id));
 }
 
 

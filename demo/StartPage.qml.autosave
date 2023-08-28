@@ -72,7 +72,7 @@ FluWindow {
         if(id){
             //成功显示id
 
-            //显示登陆界面
+            //重新回到登陆界面
             myLoader.sourceComponent = loginPage
             startPage.width = 400
             startPage.height = 480

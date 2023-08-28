@@ -23,6 +23,7 @@ public:
 
     //c++ -> qml
     void loginBack(QJsonObject jsondata);
+    void registerBack(QJsonObject jsondata);
 
 private:
     //前端通信engine
