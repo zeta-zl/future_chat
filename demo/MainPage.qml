@@ -309,9 +309,9 @@ FluWindow {
             }
         }
         FluPivotItem{
-            title:" 朋友圈 "
+            title:"  群聊  "
             contentItem:FluText{
-                text:"Unread emails go here."
+                text:"这里是群聊"
             }
         }
     }
