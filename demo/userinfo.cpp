@@ -27,6 +27,18 @@ void userinfo::setName(QString name){
     }
 }
 
+QString userinfo::getAvatar(){
+    return m_avatar;
+}
+
+void userinfo::setAvatar(QString path){
+    if(m_avatar!=m_avatar){
+        m_avatar=m_avatar;
+        emit avatarchanged();
+    }
+}
+
+
 void userinfo::parse(QJsonObject jsonobject){
     m_id=jsonobject["id"].toInt();
     m_name=jsonobject["name"].toString();

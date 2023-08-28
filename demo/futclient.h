@@ -40,8 +40,8 @@ private:
 private slots:
     void loginfunc(QString id,QString pwd);
     void regfunc(QString name,QString pwd);
-    void addFriendfunc(QString friendId, QString verificationInfo) ;
-
+    void addFriendfunc(QString friendId, QString verificationInfo);
+    void setHistoryfunc(int userid);
 
 };
 

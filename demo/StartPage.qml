@@ -57,10 +57,12 @@ FluWindow {
 
     function loginBack(result){
         if(result){
+            curuser.id = parseInt(userid)
             //点击登录按钮后需要的操作
             var component = Qt.createComponent("MainPage.qml");
-            var win = component.createObject();
-            win.show();
+            var mainwidow = component.createObject();
+            mainwidow.sendRequest();
+            mainwidow.show();
             startPage.visible = false;
         }else{
             // 失败窗口
@@ -68,11 +70,10 @@ FluWindow {
     }
 
     function registerBack(id){
-        console.log("qml registerBack is called")
         if(id){
-            //成功显示id
+            //注册成功弹出窗口显示id
 
-            //显示登陆界面
+            //重新回到登陆界面
             myLoader.sourceComponent = loginPage
             startPage.width = 400
             startPage.height = 480

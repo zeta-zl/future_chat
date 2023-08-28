@@ -12,6 +12,15 @@ FluWindow {
     height: 800
     //backgroundColor: "white"
     title: qsTr("FutureTalk")
+
+
+    // 请求历史消息
+    signal requestHistoryMessage(int curuserid)
+
+    function sendRequest() {
+      requestHistoryMessage(curuser.id);
+    }
+
     ListModel {
             id: friendModel
 

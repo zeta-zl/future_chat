@@ -72,7 +72,6 @@ FluRectangle {
                     //发送登录信号
                     console.log(userid,userpwd,"登录")
                     loginSignal(userid,userpwd)
-
                 }
             }
         }

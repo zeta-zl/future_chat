@@ -50,6 +50,8 @@ FluWindow{
             color: "#888888"
         }
 
+
+
         FluDropDownButton{
             text:"       菜单       "
             anchors.right: parent.right
@@ -60,12 +62,28 @@ FluWindow{
             items:[
                 FluMenuItem{
                     text:"查看群名片"
+
+                    onClicked: {
+                        var component = Qt.createComponent("GroupInfoPage.qml");
+                        var win = component.createObject();
+                        win.show();
+                    }
                 },
                 FluMenuItem{
                     text:"查看群成员"
+                    onClicked: {
+                        var component = Qt.createComponent("GroupMemberPage.qml");
+                        var win = component.createObject();
+                        win.show();
+                    }
                 },
                 FluMenuItem{
                     text:"邀请好友"
+                    onClicked: {
+                        var component = Qt.createComponent("GroupInvitePage.qml");
+                        var win = component.createObject();
+                        win.show();
+                    }
                 },
                 FluMenuItem{
                     FluToggleButton{
@@ -95,17 +113,12 @@ FluWindow{
 
             // 用户名； 头像； 新消息内容； 是否是自己(暂时以颜色区分)
             ListElement {
-                username: "Alice"; avatar: "images/test2.jpg"; message: "Hello!";
+                username: "Alice"; avatar: "images/test2.jpg"; message: "1";
                 self: false
             }
             ListElement {
-                username: "Bob"; avatar: "images/test2.jpg"; message: "Hey there!";
+                username: "Bob"; avatar: "images/test2.jpg"; message: "捂脸哭捂脸哭捂脸哭捂脸哭捂脸哭捂脸哭捂脸哭捂脸哭捂脸哭捂脸哭捂脸哭捂脸哭捂脸哭捂脸哭捂脸哭捂脸哭捂脸哭捂脸哭捂脸哭捂脸哭捂脸哭捂脸哭捂脸哭捂脸哭捂脸哭捂脸哭捂脸哭捂脸哭捂脸哭捂脸哭捂脸哭捂脸哭捂脸哭捂脸哭";
                 self: false
-            }
-
-            ListElement {
-                username: "大黄"; avatar: "images/test3.jpg"; message: "捂脸哭";
-                self: true
             }
 
             ListElement {
@@ -131,19 +144,25 @@ FluWindow{
                 height: parent.height
                 model: chatModel
 
-                delegate: Item { // 列表元素的结构
+                delegate: ColumnLayout { // 列表元素的结构
                     width: parent.width
-                    height: 60
 
-                    Rectangle { // 消息
+                    Rectangle { // 别人的消息
                         width: parent.width
-                        height: 60
+                        height: {
+                            if(chatMsgText.height <= 25){
+                                60
+                            }
+                            else{
+                                chatMsgText.height + 40
+                            }
+                        }
                         color: "#F0F0F0"
                         visible: !model.self
 
                         Text { // 用户名
                             text: model.username
-                            font.pixelSize: 14
+                            font.pixelSize: 16
                             color: "#888888"
                             anchors.top: parent.top
                             anchors.topMargin: 6
@@ -157,8 +176,8 @@ FluWindow{
                             height: 50
                             radius: 8
                             color: "#F0F0F0"
-                            anchors.bottom: parent.bottom
-                            anchors.bottomMargin: 5
+                            anchors.top: parent.top
+                            anchors.topMargin: 5
                             anchors.left: parent.left
                             anchors.leftMargin: 15
 
@@ -171,24 +190,36 @@ FluWindow{
                         }
 
                         FluCopyableText { // 消息
+                            id: chatMsgText
                             text: model.message
+                            width: {
+                                if(chatMsgText2.width >= 380) {380}
+                            }
+                            wrapMode: Text.WrapAnywhere
                             font.pixelSize: 18
                             anchors.left: chatProfilePic.right
                             anchors.leftMargin: 15
-                            anchors.bottom: parent.bottom
-                            anchors.bottomMargin: 10
+                            anchors.top: parent.top
+                            anchors.topMargin: 30
                         }
                     }
 
                     Rectangle { // 自己的消息
                         width: parent.width
-                        height: 60
+                        height: {
+                            if(chatMsgText2.height <= 25){
+                                60
+                            }
+                            else{
+                                chatMsgText2.height + 40
+                            }
+                        }
                         color: "#4CDF01"
                         visible: model.self
 
                         Text { // 用户名
                             text: model.username
-                            font.pixelSize: 14
+                            font.pixelSize: 16
                             color: "#888888"
                             anchors.top: parent.top
                             anchors.topMargin: 6
@@ -202,8 +233,8 @@ FluWindow{
                             height: 50
                             radius: 8
                             color: "#F0F0F0"
-                            anchors.bottom: parent.bottom
-                            anchors.bottomMargin: 5
+                            anchors.top: parent.top
+                            anchors.topMargin: 5
                             anchors.right: parent.right
                             anchors.rightMargin: 15
 
@@ -216,12 +247,17 @@ FluWindow{
                         }
 
                         FluCopyableText { // 消息
+                            id: chatMsgText2
                             text: model.message
+                            width: {
+                                if(chatMsgText2.width >= 380) {380}
+                            }
+                            wrapMode: Text.WrapAtWordBoundaryOrAnywhere
                             font.pixelSize: 18
                             anchors.right: chatProfilePicSelf.left
                             anchors.rightMargin: 6
-                            anchors.bottom: parent.bottom
-                            anchors.bottomMargin: 10
+                            anchors.top: parent.top
+                            anchors.topMargin: 30
                         }
                     }
                 }
@@ -230,9 +266,9 @@ FluWindow{
     }
 
     property var emojis:
-        ["1", "2", "3", "", "", "", "", "", "", "", "", "",
-        "", "", "", "", "", "", "", "", "", "", "", "",
-        "", "", "", "", "", "", "", "", "", "", "", ""]
+        ["😂", "🤣", "😅", "😀", "😊", "😭", "🫢", "😴", "🥱", "🤐", "😝", "😯",
+        "😁", "😘", "🤗", "😫", "😍", "😒", "😎", "😉", "😢", "😩", "😡", "🥵",
+        "🤭", "🙄", "🤨", "😮", "😨", "🤢", "💖", "💕", "🙌", "👍", "👌", "🤞"]
 
     FluMenu{
         id:emojiMenu
@@ -240,7 +276,7 @@ FluWindow{
 
         ScrollView {
             width: parent.width
-            height: 180
+            height: 160
 
             GridLayout { // 网格布局
                 columns: 6 // 指定列数
@@ -249,26 +285,120 @@ FluWindow{
                 anchors.left: parent.left
                 anchors.leftMargin: 10
 
-
-
-
                 Repeater {
-                    model: 30
+                    model: 36
 
                     Rectangle {
                         height: 40
                         width: 40
                         FluButton{
+                            id: emjBtn
                             text: emojis[index]
                             height: 40
                             width: 40
                             font.pixelSize: 30
 
                             onClicked: {
-
+                                chatTextBox.text = chatTextBox.text + emjBtn.text
+                                chatTextBox.cursorPosition = chatTextBox.text.length
+                                emojiMenu.close()
                             }
                         }
                     }
+                }
+            }
+        }
+    }
+
+    FluMenu{ // 语音消息菜单，功能有待实现
+        id:voiceMsgMenu
+        width: 150
+
+        Item{
+            width:parent.width
+            height: 100
+
+            Text {
+                id: voiceMsgMenuText
+                text: qsTr("正在录制...")
+                font.pixelSize: 18
+                anchors.top: parent.top
+                anchors.topMargin: 15
+                anchors.horizontalCenter: parent.horizontalCenter
+            }
+
+            Row {
+                anchors.top: parent.top
+                anchors.topMargin: 50
+                anchors.horizontalCenter: parent.horizontalCenter
+                spacing: 10
+
+                FluFilledButton{
+                    id: voiceMsgMenuBtn
+                    disabled: true
+                    text: qsTr("试听")
+
+                    onClicked: {
+                        // 播放
+                    }
+                }
+
+                FluFilledButton{
+                    id: voiceMsgMenuBtn2
+                    text: qsTr("完成")
+                    onClicked: {
+                        voiceMsgMenuText.text = "录制完成"
+                        voiceMsgMenuBtn.disabled = false
+                        voiceMsgMenuBtn2.text = "发送"
+                    }
+                }
+            }
+        }
+
+        onClosed: {
+            // 菜单关闭时
+
+            voiceMsgMenuText.text = "正在录制..."
+            voiceMsgMenuBtn.disabled = true
+            voiceMsgMenuBtn2.text = "完成"
+        }
+    }
+
+    FluMenu{ // 图片消息菜单，功能有待实现
+        id:imgMsgMenu
+        width: 100
+
+        Item{
+            width:parent.width
+            height: 40
+
+            FluFilledButton{
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.verticalCenter: parent.verticalCenter
+                text: qsTr("选取图片")
+
+                onClicked: {
+                    // 发送图片的操作
+                }
+            }
+        }
+    }
+
+    FluMenu{ // 文件消息菜单，功能有待实现
+        id:fileMsgMenu
+        width: 100
+
+        Item{
+            width:parent.width
+            height: 40
+
+            FluFilledButton{
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.verticalCenter: parent.verticalCenter
+                text: qsTr("选取文件")
+
+                onClicked: {
+                    // 发送文件的操作
                 }
             }
         }
@@ -280,59 +410,45 @@ FluWindow{
         height: 50
         anchors.top: chatMsgArea.bottom
 
-        FluIconButton{
-            id: emojiBtn
-            iconSource:FluentIcons.EmojiTabSmilesAnimals
+        Row{
             anchors.left: parent.left
             anchors.leftMargin: 15
             anchors.verticalCenter: parent.verticalCenter
+            spacing: 5
 
-            onClicked: {
-                emojiMenu.popup();
+
+
+            FluIconButton{
+                iconSource:FluentIcons.EmojiTabSmilesAnimals
+                anchors.verticalCenter: parent.verticalCenter
+
+                onClicked: {
+                    emojiMenu.popup();
+                }
             }
-        }
 
-        FluIconButton{
-            id: voiceMsgBtn
-            iconSource:FluentIcons.MicrophoneListening
-            anchors.left: emojiBtn.right
-            anchors.leftMargin: 5
-            anchors.verticalCenter: parent.verticalCenter
-            onClicked: {
-
+            FluIconButton{
+                iconSource:FluentIcons.MicrophoneListening
+                anchors.verticalCenter: parent.verticalCenter
+                onClicked: {
+                    voiceMsgMenu.popup()
+                }
             }
-        }
 
-        FluIconButton{
-            id: imgMsgBtn
-            iconSource:FluentIcons.ImageExport
-            anchors.left: voiceMsgBtn.right
-            anchors.leftMargin: 5
-            anchors.verticalCenter: parent.verticalCenter
-            onClicked: {
-
+            FluIconButton{
+                iconSource:FluentIcons.ImageExport
+                anchors.verticalCenter: parent.verticalCenter
+                onClicked: {
+                    imgMsgMenu.popup()
+                }
             }
-        }
 
-        FluIconButton{
-            id: fileMsgBtn
-            iconSource:FluentIcons.Folder
-            anchors.left: imgMsgBtn.right
-            anchors.leftMargin: 5
-            anchors.verticalCenter: parent.verticalCenter
-            onClicked: {
-
-            }
-        }
-
-        FluIconButton{
-            id: moreBtn
-            iconSource:FluentIcons.Add
-            anchors.left: fileMsgBtn.right
-            anchors.leftMargin: 5
-            anchors.verticalCenter: parent.verticalCenter
-            onClicked: {
-
+            FluIconButton{
+                iconSource:FluentIcons.Folder
+                anchors.verticalCenter: parent.verticalCenter
+                onClicked: {
+                    fileMsgMenu.popup()
+                }
             }
         }
     }
@@ -412,6 +528,4 @@ FluWindow{
             showSuccess("点击确定按钮")
         }
     }
-
-
 }
