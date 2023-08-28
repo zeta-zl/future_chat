@@ -25,6 +25,7 @@ public:
     void loginBack(QJsonObject jsondata);
     void registerBack(QJsonObject jsondata);
     void addFriendBack(QJsonObject jsondata);
+    void setHistoryBack(QJsonObject jsondata);
 
 private:
     //前端通信engine

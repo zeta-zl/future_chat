@@ -25,6 +25,10 @@ FluWindow {
     property string regpwd2: ""
     signal regSignal(string regname, string regpwd)
 
+    // 请求历史消息信号
+    signal requestHistoryMessage(int curuserid)
+
+
 
     // Loader加载不同组件，实现切换页面的功能
     Loader{
@@ -59,11 +63,12 @@ FluWindow {
         if(result){
             curuser.id = parseInt(userid)
             //点击登录按钮后需要的操作
-            var component = Qt.createComponent("MainPage.qml");
-            var mainwidow = component.createObject();
-            mainwidow.sendRequest();
-            mainwidow.show();
-            startPage.visible = false;
+            startPageLoader.source = "MainPage.qml"
+            requestHistoryMessage(parseInt(userid))
+            // var component = Qt.createComponent("MainPage.qml");
+            // var win = component.createObject();
+            // win.show();
+            // startPage.visible = false;
         }else{
             // 失败窗口
         }
@@ -81,4 +86,7 @@ FluWindow {
             // 失败窗口
         }
     }
+    Loader {
+           id : startPageLoader
+       }
 }

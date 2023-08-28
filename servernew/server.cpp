@@ -5,6 +5,7 @@
 #include <QTcpServer>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QJsonArray>
 
 //服务器端接口数量没有控制，未修复
 
@@ -60,7 +61,37 @@ void server::handleReadyRead(QTcpSocket *newClientSocket)
                 QJsonObject jsonData = jsonDoc.object();
                 //QString message = jsonData.toString();
                 qDebug()<<jsonData["request"].toString();
-                if(jsonData["request"].toString()=="login"){
+                if(jsonData["request"].toString()=="setHistory"){
+                    qDebug()<<"正确启动";
+                    QJsonObject jsonObj;
+                    jsonObj.insert("targetld", 1); // 分配的id
+                    jsonObj.insert("targetType",true);//注册成功与否
+                    jsonObj.insert("targetName","<_>");
+                    jsonObj.insert("avatar","./");
+                    jsonObj.insert("message","这是一条消息");
+                    jsonObj.insert("msgSender","大黄");
+                    jsonObj.insert("msgTime","19:20:21");
+
+                    QJsonObject jsonObj1;
+                    jsonObj1.insert("targetld", 1); // 分配的id
+                    jsonObj1.insert("targetType",true);//注册成功与否
+                    jsonObj.insert("targetName","生于未来");
+                    jsonObj1.insert("avatar","./");
+                    jsonObj1.insert("message","这是一条消息");
+                    jsonObj1.insert("msgSender","大黄");
+                    jsonObj1.insert("msgTime","19:20:21");
+
+                    QJsonArray jsonArray;
+                    jsonArray.append(jsonObj);
+                    jsonArray.append(jsonObj1);
+
+                    QJsonObject sendobj;
+                    sendobj.insert("request","setHistoryBack");
+                    sendobj.insert("messages",jsonArray);
+
+                    QString jsonstring=QJsonDocument(sendobj).toJson();
+                    clientSocket->write(jsonstring.toUtf8());
+                }else if(jsonData["request"].toString()=="login"){
                     qDebug()<<"正确启动";
                     QJsonObject jsonObj;
                     jsonObj.insert("request","loginBack"); //反馈类型

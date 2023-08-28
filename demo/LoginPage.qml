@@ -59,7 +59,6 @@ FluRectangle {
             onClicked: {
                 //检查用户账号是否为纯数字
                 if(isNaN(inputid.text)){
-                    console.log("输入非数字")
                     showError("只能输入纯数字账号")
                 }else{
                     userid=inputid.text
@@ -70,7 +69,6 @@ FluRectangle {
                         showError("密码不能为空")
                     }
                     //发送登录信号
-                    console.log(userid,userpwd,"登录")
                     loginSignal(userid,userpwd)
                 }
             }

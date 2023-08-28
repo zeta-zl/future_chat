@@ -4,6 +4,7 @@
 #include<QTcpSocket>
 #include<QString>
 #include<QQuickItem>
+#include<QJsonArray>
 
 FutClient::FutClient(QQmlApplicationEngine *engine, QObject *parent)
 {
@@ -25,7 +26,7 @@ FutClient::FutClient(QQmlApplicationEngine *engine, QObject *parent)
     // 注册
     QObject::connect(root,SIGNAL(regSignal(QString,QString)),this,SLOT(regfunc(QString,QString)));
     // 请求聊天历史记录，创建mainpage
-    // QObject* mainwindow=root->findChild<QObject*>("mainPage_object");
+    // QObject* mainwindow=root->findChild<QObject*>("MainPage_object");
     QObject::connect(root,SIGNAL(requestHistoryMessage(int)),this,SLOT(setHistoryfunc(int)));
     // 添加好友
     QObject::connect(root,SIGNAL(addFriendSignal(QString,QString)),this,SLOT(addFriendfunc(QString,QString)));
@@ -42,7 +43,6 @@ void FutClient::receivemsg(){
     connect(m_tcpsocket,&QTcpSocket::readyRead,this,[=](){
         QByteArray data = m_tcpsocket->readAll();
         QJsonDocument jsonDoc = QJsonDocument::fromJson(data);
-        qDebug()<<"客户端已接收信息:"<<jsonDoc;
         parsecommand(jsonDoc);
     });
 }
@@ -50,13 +50,14 @@ void FutClient::receivemsg(){
 void FutClient::parsecommand(QJsonDocument jsonDoc){
     QJsonObject jsonData = jsonDoc.object();
     QString request = jsonData["request"].toString();
-    qDebug()<<"parsecommand request:"<<request;
     if (request=="loginBack"){
         loginBack(jsonData);
     } else if(request=="registerBack"){
         registerBack(jsonData);
-    } else if(request == "add_friend"){
+    } else if(request=="add_friend"){
         addFriendBack(jsonData);
+    } else if(request=="setHistoryBack"){
+        setHistoryBack(jsonData);
     }
 }
 
@@ -64,7 +65,7 @@ void FutClient::parsecommand(QJsonDocument jsonDoc){
 void FutClient::loginfunc(QString id, QString pwd){
     QJsonObject jsonobj;
     jsonobj["request"]="login";
-    jsonobj["id"]=id;
+    jsonobj["clientId"]=id;
     jsonobj["password"]=pwd;
     QString jsonstring=QJsonDocument(jsonobj).toJson();
     sendmsg(jsonstring);
@@ -75,7 +76,7 @@ void FutClient::loginBack(QJsonObject jsondata){
     if(!result){
         clientid=-1;
     }else{
-        int id=jsondata["id"].toInt();
+        int id=jsondata["clientId"].toInt();
         //其他函数调用clientid
         clientid=id;
     }
@@ -88,7 +89,7 @@ void FutClient::loginBack(QJsonObject jsondata){
 void FutClient::regfunc(QString name,QString pwd){
         QJsonObject jsonobj;
         jsonobj["request"]="register";
-        jsonobj.insert("id",-1); //未注册用户发送的数据包ID默认为随机非正数，传一个随机负数就行
+        jsonobj.insert("clientId",-1); //未注册用户发送的数据包ID默认为随机非正数，传一个随机负数就行
         jsonobj.insert("userName",name);
         jsonobj.insert("password",pwd);
         QString jsonstring=QJsonDocument(jsonobj).toJson();
@@ -96,7 +97,7 @@ void FutClient::regfunc(QString name,QString pwd){
 }
 
 void FutClient::registerBack(QJsonObject jsondata){
-    bool id=jsondata["id"].toInt();
+    bool id=jsondata["clientId"].toInt();
     //调用QML函数
     QVariant res;
     QMetaObject::invokeMethod(root,"registerBack",Q_RETURN_ARG(QVariant,res),Q_ARG(QVariant,id));
@@ -105,9 +106,31 @@ void FutClient::registerBack(QJsonObject jsondata){
 
 //初始化历史消息界面
 void FutClient::setHistoryfunc(int userid){
-    qDebug()<<"setHistoryfunc"<<userid;
+    QJsonObject jsonobj;
+    jsonobj["request"] = "setHistory";
+    jsonobj["clientId"] = userid;
+    QString jsonstring=QJsonDocument(jsonobj).toJson();
+    sendmsg(jsonstring);
 }
 
+void FutClient::setHistoryBack(QJsonObject jsondata){
+    QJsonArray jsonArray=jsondata["messages"].toArray();
+    //jsonArray.size()
+    for(int i=0;i<1;i++){
+        QJsonObject obj = jsonArray[i].toObject();
+        int targetid=obj["targetId"].toInt();
+        bool targetType=obj["targetType"].toBool();
+        QString targetName=obj["targetName"].toString();
+        QString avatar=obj["avatar"].toString();
+        QString message=obj["message"].toString();
+        QString msgSender=obj["msgSender"].toString();
+        QString timestamp=obj["timeStamp"].toString();
+        //调用QML函数
+        QVariant res;
+        QObject* MainPage=root->findChild<QObject*>("MainPage_object");
+        QMetaObject::invokeMethod(MainPage,"setHistoryBack",Q_RETURN_ARG(QVariant,res),Q_ARG(QVariant,targetName),Q_ARG(QVariant,avatar),Q_ARG(QVariant,message),Q_ARG(QVariant,msgSender),Q_ARG(QVariant,timestamp));
+    }
+}
 
 void FutClient::addFriendfunc(QString friendId, QString verificationInfo = "") {
        QJsonObject jsonobj;

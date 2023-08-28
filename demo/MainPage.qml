@@ -12,18 +12,18 @@ FluWindow {
     height: 800
     //backgroundColor: "white"
     title: qsTr("FutureTalk")
+    objectName: "MainPage_object"
 
-
-    // 请求历史消息
-    signal requestHistoryMessage(int curuserid)
-
-    function sendRequest() {
-      requestHistoryMessage(curuser.id);
+    function setHistoryBack(chatName,avatar,message,msgSender,timestamp) {
+       var e{
+            username: chatName; avatar: "images/test.png"; message: msgSender+":"+message;
+            newmsg: "3"; newmsgtime: timestamp; isdonotdisturb: false;
+        };
+        friendModel.append(e);
     }
 
     ListModel {
             id: friendModel
-
             // 用户名； 头像； 新消息内容； 新消息数量； 是否开启免打扰
             ListElement {
                 username: "Alice"; avatar: "images/test.png"; message: "Hello!";
@@ -42,31 +42,6 @@ FluWindow {
                 username: "生于未来"; avatar: "images/test.png"; message: "大黄：[捂脸哭]";
                 newmsg: "100"; newmsgtime: "19:40"; isdonotdisturb: true
             }
-            ListElement {
-                username: "生于未来"; avatar: "images/test.png"; message: "大黄：[捂脸哭]";
-                newmsg: "100"; newmsgtime: "19:40"; isdonotdisturb: true
-            }
-            ListElement {
-                username: "生于未来"; avatar: "images/test.png"; message: "大黄：[捂脸哭]";
-                newmsg: "100"; newmsgtime: "19:40"; isdonotdisturb: true
-            }
-            ListElement {
-                username: "生于未来"; avatar: "images/test.png"; message: "大黄：[捂脸哭]";
-                newmsg: "100"; newmsgtime: "19:40"; isdonotdisturb: true
-            }
-            ListElement {
-                username: "生于未来"; avatar: "images/test.png"; message: "大黄：[捂脸哭]";
-                newmsg: "100"; newmsgtime: "19:40"; isdonotdisturb: true
-            }
-            ListElement {
-                username: "生于未来"; avatar: "images/test.png"; message: "大黄：[捂脸哭]";
-                newmsg: "100"; newmsgtime: "19:40"; isdonotdisturb: true
-            }
-            ListElement {
-                username: "生于未来"; avatar: "images/test.png"; message: "大黄：[捂脸哭]";
-                newmsg: "100"; newmsgtime: "19:40"; isdonotdisturb: true
-            }
-
     }
 
     FluArea {
