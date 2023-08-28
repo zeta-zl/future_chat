@@ -24,6 +24,8 @@ FutClient::FutClient(QQmlApplicationEngine *engine, QObject *parent)
     QObject::connect(root,SIGNAL(loginSignal(QString,QString)),this,SLOT(loginfunc(QString,QString)));
     // 注册
     QObject::connect(root,SIGNAL(regSignal(QString,QString)),this,SLOT(regfunc(QString,QString)));
+    // 添加好友
+    QObject::connect(root,SIGNAL(addFriendSignal(QString,QString)),this,SLOT(addFriendfunc(QString,QString)));
 
 }
 
@@ -50,6 +52,8 @@ void FutClient::parsecommand(QJsonDocument jsonDoc){
         loginBack(jsonData);
     } else if(request=="registerBack"){
         registerBack(jsonData);
+    } else if(request == "add_friend"){
+        addFriendBack(jsonData);
     }
 }
 
@@ -92,6 +96,23 @@ void FutClient::registerBack(QJsonObject jsondata){
     //调用QML函数
     QVariant res;
     QMetaObject::invokeMethod(root,"registerBack",Q_RETURN_ARG(QVariant,res),Q_ARG(QVariant,id));
+}
+
+void FutClient::addFriendfunc(QString friendId, QString verificationInfo = "") {
+       QJsonObject jsonobj;
+       jsonobj["request"] = "add_friend";
+       jsonobj["friend_id"] = friendId;
+       jsonobj["verification_info"] = verificationInfo;
+
+       QString jsonstring = QJsonDocument(jsonobj).toJson();
+       sendmsg(jsonstring);
+   }
+
+void FutClient::addFriendBack(QJsonObject jsondata){
+    bool id=jsondata["result"].toInt();
+    //调用QML函数
+    QVariant res;
+    QMetaObject::invokeMethod(root,"add_friend",Q_RETURN_ARG(QVariant,res),Q_ARG(QVariant,id));
 }
 
 
