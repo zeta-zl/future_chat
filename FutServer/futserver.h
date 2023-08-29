@@ -43,9 +43,8 @@ private:
     void registerRespond(QJsonObject jsonData);
     void loginRespond(QJsonObject jsonData);
     void setHistoryRespond(QJsonObject jsonData);
-
     void sendChatMessageRespond(QJsonObject jsonData);
-
+    void initChatWindow(QJsonObject jsonData);
 
     // 一些数据库操作
     QJsonObject addAccount(QString userName, QString password);
@@ -53,6 +52,7 @@ private:
     QJsonObject loadMessageList(int clientId);
     QJsonObject saveMessage(int clientId, int targetId, bool targetType, QString content, QString time);
     QList<int> getGroupMemberList(int groupId);
+    QJsonObject getHistoryMessage(int clientId, int targetId, bool targetType);
 
 };
 #endif // FUTSERVER_H

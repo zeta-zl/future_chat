@@ -204,6 +204,10 @@ void FutServer::parseRequest(QJsonObject jsonData)
     {
         sendChatMessageRespond(jsonData);
     }
+    else if(request=="initChatWindow")
+    {
+        initChatWindow(jsonData);
+    }
     else if(request=="search")//查找群/人
     {
 //        searchRespond
@@ -334,7 +338,6 @@ void FutServer::setHistoryRespond(QJsonObject jsonData)
 // 发消息
 void FutServer::sendChatMessageRespond(QJsonObject jsonData)
 {
-    //目标ID
     int clientId = jsonData["clientId"].toInt();
     int targetId = jsonData["targetId"].toInt();
     bool targetType = jsonData["targetType"].toBool();
@@ -367,5 +370,24 @@ void FutServer::sendChatMessageRespond(QJsonObject jsonData)
                 respondToClient(jsonResult, targetSocket);
             }
         }
+    }
+}
+
+void FutServer::initChatWindow(QJsonObject jsonData)
+{
+    int clientId = jsonData["clientId"].toInt();
+    int targetId = jsonData["targetId"].toInt();
+    bool targetType = jsonData["targetType"].toBool();
+
+
+    if (clientMap.contains(clientId))
+    {
+        QTcpSocket *targetSocket = getSocketById(clientId);
+        QJsonObject jsonResult = getHistoryMessage(clientId, targetId, targetType);
+        respondToClient(jsonResult, targetSocket);
+    }
+    else
+    {
+        qDebug()<< "用户离线";
     }
 }

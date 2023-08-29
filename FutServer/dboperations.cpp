@@ -52,8 +52,9 @@ QJsonObject FutServer::addAccount(QString userName, QString password)
 QJsonObject FutServer::confirmLogin(int clientId, QString password)
 {
     QJsonObject jsonObj;
+    QJsonObject userInfo;
     QString sql;
-    sql = QString("select password, user_name from user_info where account = %1").arg(clientId);
+    sql = QString("select password, user_name, avatar_path, signature from user_info where account = %1").arg(clientId);
     // 查询对应的密码
     SelectResult selResult = SelectResult();
     selResult.executeSelect( db, sql.toStdString());
@@ -64,21 +65,28 @@ QJsonObject FutServer::confirmLogin(int clientId, QString password)
         qDebug() << "登录失败，账号不存在！";
         jsonObj.insert("request","loginBack"); //登录反馈
         jsonObj.insert("result", false);//
-        jsonObj.insert("userName", NULL);
+        jsonObj.insert("userInfo", NULL);
         return jsonObj;
     }
 
     QString correctPassword= QString::fromStdString(result[0][0]);
     QString userName = QString::fromStdString(result[0][1]);
+    QString avatar = QString::fromStdString(result[0][2]);
+    QString signature = QString::fromStdString(result[0][3]);
     if(correctPassword == password){
         qDebug() << "登录成功";
     }
     else{
         qDebug() << "密码错误，登陆失败";
     }
+
+    userInfo["userName"] = userName;
+    userInfo["avatar"] = avatar;
+    userInfo["signature"] = signature;
+
     jsonObj.insert("request","loginBack"); //登录反馈
     jsonObj.insert("result", correctPassword == password);// 密码是否一致
-    jsonObj.insert("userName", userName);
+    jsonObj.insert("userInfo", userInfo);
 
     return jsonObj;
 }
@@ -255,3 +263,53 @@ QList<int> FutServer::getGroupMemberList(int groupId)
     return groupMemberList;
 }
 
+
+QJsonObject FutServer::getHistoryMessage(int clientId, int targetId, bool targetType)
+{
+    QJsonObject jsonObj;
+    QJsonArray messages;
+    QString sql;
+    SelectResult selResult = SelectResult();
+
+    if(targetType) // 私聊
+    {
+        sql = QString("SELECT client_account AS senderId, content, time, type, status, id "
+                      "FROM friend_message_library "
+                      "WHERE (client_account = %1 AND friend_account = %2) "
+                      "OR (client_account = %2 AND friend_account = %1) ORDER BY id DESC").arg(QString::number(clientId), QString::number(targetId));
+    }
+    else // 群聊
+    {
+        sql = QString("SELECT sender_account AS senderId, content, time, type, status, id "
+                      "FROM group_message_library "
+                      "WHERE group_account = %1 ORDER BY id DESC").arg(QString::number(targetId));
+    }
+
+    selResult.executeSelect(db, sql.toStdString());
+    auto msgResult = convert_select_result_to_vector(selResult);
+
+    if(selResult.check_result() && msgResult.size()) // 查询成功且有历史消息
+    {
+        for(int i = 0; i < selResult.row ; i++)
+        {
+            QJsonObject message;
+            message.insert("senderId", QString::fromStdString(msgResult[i][0]));
+            message.insert("content", QString::fromStdString(msgResult[i][1]));
+            message.insert("time", QString::fromStdString(msgResult[i][2]));
+            message.insert("type", QString::fromStdString(msgResult[i][3]));
+            message.insert("status", QString::fromStdString(msgResult[i][4]));
+            messages.append(message);
+        }
+    }
+    else
+    {
+        qDebug() << "查询历史消息失败或不存在历史消息";
+    }
+
+    jsonObj.insert("request", "initChatWindowBack");
+    jsonObj.insert("messages", messages);
+    jsonObj.insert("targetId", targetId);
+    jsonObj.insert("targetType", targetType);
+    jsonObj.insert("msgNumber",selResult.row);
+    return jsonObj;
+}
