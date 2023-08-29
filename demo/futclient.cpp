@@ -69,6 +69,7 @@ void FutClient::loginfunc(QString id, QString pwd){
 }
 void FutClient::loginBack(QJsonObject jsondata){
     bool result=jsondata["result"].toBool();
+    QString name=jsondata["userName"].toString();
     if(!result){
         clientid=-1;
     }else{
@@ -78,7 +79,7 @@ void FutClient::loginBack(QJsonObject jsondata){
     }
     //调用QML函数
     QVariant res;
-    QMetaObject::invokeMethod(root,"loginBack",Q_RETURN_ARG(QVariant,res),Q_ARG(QVariant,result));
+    QMetaObject::invokeMethod(root,"loginBack",Q_RETURN_ARG(QVariant,res),Q_ARG(QVariant,result),Q_ARG(QVariant,name));
 }
 //注册
 void FutClient::regfunc(QString name,QString pwd){
@@ -110,16 +111,17 @@ void FutClient::setHistoryfunc(int userid){
 
 void FutClient::setHistoryBack(QJsonObject jsondata){
     QJsonArray jsonArray=jsondata["messages"].toArray();
-    //jsonArray.size()
-    for(int i=0;i<1;i++){
+    for(int i=0;i<jsonArray.size();i++){
         QJsonObject obj = jsonArray[i].toObject();
-        int targetid=obj["targetId"].toInt();
+        QString targetid=obj["targetId"].toString();
+        qDebug()<<"targetid"<<targetid;
         bool targetType=obj["targetType"].toBool();
         QString targetName=obj["targetName"].toString();
+        qDebug()<<"targetName"<<targetName;
         QString avatar=obj["avatar"].toString();
         QString message=obj["message"].toString();
         QString msgSender=obj["msgSender"].toString();
-        QString timestamp=obj["timeStamp"].toString();
+        QString timestamp=obj["msgTime"].toString();
         //调用QML函数
         QVariant res;
         QObject* MainPage=root->findChild<QObject*>("MainPage_object");
