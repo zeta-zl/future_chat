@@ -7,6 +7,7 @@ import FluentUI 1.0
 import QtGraphicalEffects 1.0
 
 FluWindow {
+    id: root
     visible: true
     width: 400
     height: 800
@@ -15,7 +16,7 @@ FluWindow {
     objectName: "MainPage_object"
 
     function setHistoryBack(chatName,avatar,message,msgSender,timestamp) {
-        console.log(chatName,avatar,message,msgSender,timestamp)   
+        console.log(chatName,avatar,message,msgSender,timestamp)
         friendModel.append({"username": chatName, "avatar": "images/test.png", "message": msgSender+":"+message,
                             "newmsg": "3", "newmsgtime": timestamp, "isdonotdisturb": false})
     }
@@ -56,6 +57,23 @@ FluWindow {
                 source: "images/test3.jpg"
                 mipmap: true // 抗锯齿
             }
+            MouseArea{
+                enabled: true
+                anchors.fill: parent
+                hoverEnabled: true
+                onEntered: {
+                    overTimer.stop();
+                    if (subWindow.visible === true) return;
+                    subWindow.opacity = 0.0;
+                    subWindow.visible = true;
+                    downAnimation.start();
+                    showAnimation.start();
+                }
+                onExited: {
+                    overTimer.start();
+                }
+
+            }
             layer.enabled : true
             layer.effect: DropShadow {
                 transparentBorder: true
@@ -87,20 +105,77 @@ FluWindow {
             width: 30
             height: 30
             onClicked: {
-                mainLoader.source = "AddPage.qml";
+                var component = Qt.createComponent("AddPage.qml");
+                var win = component.createObject(root);
+                win.show();
             }
         }
     }
-    Loader {
-        id : mainLoader
-
+//    PopPage {
+//        id: subWindow
+//        visible: false
+//        x: root.x - subWindow.width -6
+//        y: root.y
+//        height: 200
+//        width: 300
+//        MouseArea{
+//            anchors.fill: parent
+//            hoverEnabled: true
+//            onEntered: {
+//                overTimer.stop();
+//            }
+//            onExited: {
+//                overTimer.start();
+//            }
+//        }
+//    }
+    Timer{
+        id: overTimer
+        interval: 500
+        repeat: false
+        onTriggered: {
+            upAnimation.start();
+            hideAnimation.start();
+        }
     }
-    FluWindow {
-        id:tooltipWindow
-        flags: Qt.Window | Qt.FramelessWindowHint
-        height: 400
-        width: 250
-        visible: false
+
+    PropertyAnimation{
+        id: showAnimation
+        target: subWindow
+        properties:"opacity"
+        from: 0.0
+        to: 1.0
+        duration: 250
+    }
+
+    PropertyAnimation{
+        id: hideAnimation
+        target: subWindow
+        properties:"opacity"
+        from: 1.0
+        to: 0.0
+        duration: 250
+        onStopped: {
+            subWindow.visible = false;
+        }
+    }
+
+    PropertyAnimation{
+        id: downAnimation
+        target: subWindow
+        properties:"y"
+        from: root.y
+        to: root.y + 24
+        duration: 150
+    }
+
+    PropertyAnimation{
+        id: upAnimation
+        target: subWindow
+        properties:"y"
+        from: root.y + 24
+        to: root.y
+        duration: 150
     }
     FluPivot {
         anchors.top: userCard.bottom
@@ -142,13 +217,9 @@ FluWindow {
                             hoverEnabled: true
                             onEntered: {
                                 item.isHover = true
-                                tooltipWindow.x = 0; // 位移使得悬浮窗口稍微偏离鼠标位置
-                                tooltipWindow.y = 0;
-                                tooltipWindow.visible = true;
                             }
                             onExited: {
                                 item.isHover = false
-                                tooltipWindow.visible = false;
                             }
 
                         }
@@ -172,6 +243,7 @@ FluWindow {
                             anchors.leftMargin: 5
 
                             FluBadge{
+                                z:99
                                 count: model.newmsg // 圆点数字
                                 isDot: model.isdonotdisturb
                                 color: Qt.rgba(255/255,0/255,0/255,1)
@@ -247,6 +319,11 @@ FluWindow {
                             hoverEnabled: true
                             onEntered: item_.isHover = true
                             onExited: item_.isHover = false
+                            onDoubleClicked: {
+                                var component = Qt.createComponent("ChatPage.qml");
+                                var win = component.createObject();
+                                win.show();
+                            }
                         }
                         states: [
                                         State { name: "true"; PropertyChanges { target: item_; color : "#DDDDDD" } },
@@ -268,6 +345,7 @@ FluWindow {
                             anchors.leftMargin: 5
 
                             FluBadge{
+                                z:99
                                 count: model.newmsg // 圆点数字
                                 isDot: model.isdonotdisturb
                                 color: Qt.rgba(255/255,0/255,0/255,1)

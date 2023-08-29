@@ -63,7 +63,8 @@ OBJECTS       = debug/LoginPage.o \
 
 DIST          = GroupInfoPage.qml \
 		GroupInvitePage.qml \
-		GroupMemberPage.qml ..\demo\futclient.h \
+		GroupMemberPage.qml \
+		PopPage.qml ..\demo\futclient.h \
 		..\demo\userinfo.h ..\demo\LoginPage.cpp \
 		..\demo\futclient.cpp \
 		..\demo\userinfo.cpp
@@ -112,14 +113,20 @@ compiler_rcc_clean:
 debug/qrc_qml.cpp: ../demo/qml.qrc \
 		D:/Qt5.12.8/5.12.8/mingw73_64/bin/rcc.exe \
 		../demo/StartPage.qml \
+		../demo/GroupInfoPage.qml \
 		../demo/MainPage.qml \
+		../demo/AddPage.qml \
+		../demo/GroupInvitePage.qml \
 		../demo/ChatPage.qml \
 		../demo/LoginPage.qml \
+		../demo/GroupMemberPage.qml \
 		../demo/RegisterPage.qml
 	D:\Qt5.12.8\5.12.8\mingw73_64\bin\rcc.exe -name qml ..\demo\qml.qrc -o debug\qrc_qml.cpp
 
 debug/qrc_res.cpp: ../demo/res.qrc \
 		D:/Qt5.12.8/5.12.8/mingw73_64/bin/rcc.exe \
+		../demo/test3.jpg \
+		../demo/test2.jpg \
 		../demo/test.png
 	D:\Qt5.12.8\5.12.8\mingw73_64\bin\rcc.exe -name res ..\demo\res.qrc -o debug\qrc_res.cpp
 
@@ -233,7 +240,7 @@ debug/moc_futclient.cpp: ../demo/futclient.h \
 		D:/Qt5.12.8/5.12.8/mingw73_64/include/QtCore/qdatetime.h \
 		debug/moc_predefs.h \
 		D:/Qt5.12.8/5.12.8/mingw73_64/bin/moc.exe
-	D:\Qt5.12.8\5.12.8\mingw73_64\bin\moc.exe $(DEFINES) --include C:/Users/YingyuShan/future_chat/build-demo-Desktop_Qt_5_12_8_MinGW_64_bit-Debug/debug/moc_predefs.h -ID:/Qt5.12.8/5.12.8/mingw73_64/mkspecs/win32-g++ -IC:/Users/YingyuShan/future_chat/demo -ID:/Qt5.12.8/5.12.8/mingw73_64/include -ID:/Qt5.12.8/5.12.8/mingw73_64/include/QtQuick -ID:/Qt5.12.8/5.12.8/mingw73_64/include/QtGui -ID:/Qt5.12.8/5.12.8/mingw73_64/include/QtANGLE -ID:/Qt5.12.8/5.12.8/mingw73_64/include/QtQml -ID:/Qt5.12.8/5.12.8/mingw73_64/include/QtNetwork -ID:/Qt5.12.8/5.12.8/mingw73_64/include/QtCore -I. -ID:/Qt5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++ -ID:/Qt5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/x86_64-w64-mingw32 -ID:/Qt5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/backward -ID:/Qt5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include -ID:/Qt5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include-fixed -ID:/Qt5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include ..\demo\futclient.h -o debug\moc_futclient.cpp
+	D:\Qt5.12.8\5.12.8\mingw73_64\bin\moc.exe $(DEFINES) --include "C:/Users/YingyuShan/future_chat/new git/future_chat/build-demo-Desktop_Qt_5_12_8_MinGW_64_bit-Debug/debug/moc_predefs.h" -ID:/Qt5.12.8/5.12.8/mingw73_64/mkspecs/win32-g++ -I"C:/Users/YingyuShan/future_chat/new git/future_chat/demo" -ID:/Qt5.12.8/5.12.8/mingw73_64/include -ID:/Qt5.12.8/5.12.8/mingw73_64/include/QtQuick -ID:/Qt5.12.8/5.12.8/mingw73_64/include/QtGui -ID:/Qt5.12.8/5.12.8/mingw73_64/include/QtANGLE -ID:/Qt5.12.8/5.12.8/mingw73_64/include/QtQml -ID:/Qt5.12.8/5.12.8/mingw73_64/include/QtNetwork -ID:/Qt5.12.8/5.12.8/mingw73_64/include/QtCore -I. -ID:/Qt5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++ -ID:/Qt5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/x86_64-w64-mingw32 -ID:/Qt5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/backward -ID:/Qt5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include -ID:/Qt5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include-fixed -ID:/Qt5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include ..\demo\futclient.h -o debug\moc_futclient.cpp
 
 debug/moc_userinfo.cpp: ../demo/userinfo.h \
 		D:/Qt5.12.8/5.12.8/mingw73_64/include/QtCore/QObject \
@@ -336,7 +343,7 @@ debug/moc_userinfo.cpp: ../demo/userinfo.h \
 		D:/Qt5.12.8/5.12.8/mingw73_64/include/QtCore/qdatetime.h \
 		debug/moc_predefs.h \
 		D:/Qt5.12.8/5.12.8/mingw73_64/bin/moc.exe
-	D:\Qt5.12.8\5.12.8\mingw73_64\bin\moc.exe $(DEFINES) --include C:/Users/YingyuShan/future_chat/build-demo-Desktop_Qt_5_12_8_MinGW_64_bit-Debug/debug/moc_predefs.h -ID:/Qt5.12.8/5.12.8/mingw73_64/mkspecs/win32-g++ -IC:/Users/YingyuShan/future_chat/demo -ID:/Qt5.12.8/5.12.8/mingw73_64/include -ID:/Qt5.12.8/5.12.8/mingw73_64/include/QtQuick -ID:/Qt5.12.8/5.12.8/mingw73_64/include/QtGui -ID:/Qt5.12.8/5.12.8/mingw73_64/include/QtANGLE -ID:/Qt5.12.8/5.12.8/mingw73_64/include/QtQml -ID:/Qt5.12.8/5.12.8/mingw73_64/include/QtNetwork -ID:/Qt5.12.8/5.12.8/mingw73_64/include/QtCore -I. -ID:/Qt5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++ -ID:/Qt5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/x86_64-w64-mingw32 -ID:/Qt5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/backward -ID:/Qt5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include -ID:/Qt5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include-fixed -ID:/Qt5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include ..\demo\userinfo.h -o debug\moc_userinfo.cpp
+	D:\Qt5.12.8\5.12.8\mingw73_64\bin\moc.exe $(DEFINES) --include "C:/Users/YingyuShan/future_chat/new git/future_chat/build-demo-Desktop_Qt_5_12_8_MinGW_64_bit-Debug/debug/moc_predefs.h" -ID:/Qt5.12.8/5.12.8/mingw73_64/mkspecs/win32-g++ -I"C:/Users/YingyuShan/future_chat/new git/future_chat/demo" -ID:/Qt5.12.8/5.12.8/mingw73_64/include -ID:/Qt5.12.8/5.12.8/mingw73_64/include/QtQuick -ID:/Qt5.12.8/5.12.8/mingw73_64/include/QtGui -ID:/Qt5.12.8/5.12.8/mingw73_64/include/QtANGLE -ID:/Qt5.12.8/5.12.8/mingw73_64/include/QtQml -ID:/Qt5.12.8/5.12.8/mingw73_64/include/QtNetwork -ID:/Qt5.12.8/5.12.8/mingw73_64/include/QtCore -I. -ID:/Qt5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++ -ID:/Qt5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/x86_64-w64-mingw32 -ID:/Qt5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include/c++/backward -ID:/Qt5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include -ID:/Qt5.12.8/Tools/mingw730_64/lib/gcc/x86_64-w64-mingw32/7.3.0/include-fixed -ID:/Qt5.12.8/Tools/mingw730_64/x86_64-w64-mingw32/include ..\demo\userinfo.h -o debug\moc_userinfo.cpp
 
 compiler_moc_objc_header_make_all:
 compiler_moc_objc_header_clean:
