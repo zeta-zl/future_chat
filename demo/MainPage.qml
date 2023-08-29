@@ -24,14 +24,14 @@ FluWindow {
     ListModel {
             id: friendModel
             // 用户名； 头像； 新消息内容； 新消息数量； 是否开启免打扰
-//            ListElement {
-//                username: "Alice"; avatar: "images/test2.jpg"; message: "Hello!";
-//                newmsg: "3"; newmsgtime: "三天前"; isdonotdisturb: false
-//            }
-//            ListElement {
-//                username: "Bob"; avatar: "images/test2.jpg"; message: "Hey there!";
-//                newmsg: "100"; newmsgtime: "2021/8/24"; isdonotdisturb: false
-//            }
+            ListElement {
+                username: "Alice"; avatar: "images/test2.jpg"; message: "Hello!";
+                newmsg: "3"; newmsgtime: "三天前"; isdonotdisturb: false;tgtid:"1";
+            }
+            ListElement {
+                username: "Bob"; avatar: "images/test2.jpg"; message: "Hey there!";
+                newmsg: "100"; newmsgtime: "2021/8/24"; isdonotdisturb: false;tgtid:"1";
+            }
     }
 
     FluArea {

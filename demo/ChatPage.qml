@@ -11,6 +11,8 @@ FluWindow{
     height: 850
     title: qsTr("聊天")
 
+
+    signal sendChatMessageSignal(QString clientId, QString targetId, QString targetType, QString content, QString time)
     FluRectangle{ // 顶部条
         id: topRtg
         width: parent.width
@@ -524,8 +526,12 @@ FluWindow{
                 showError("          不能发送空消息")
             }
             else{
-                chatModel.append({"username": "大黄", "avatar": "images/test3.jpg",
-                                 "message": chatTextBox.text, "self": true})
+                var mes = {"username":curuser.name, "avatar": curuser.avatar,
+                    "message": chatTextBox.text, "self": true}
+//                chatModel.append({"username": "大黄", "avatar": "images/test3.jpg",
+//                                 "message": chatTextBox.text, "self": true})
+                sendChatMessageSignal(curuser.id,t_id,isp,chatTextBox.text,QDateTime::currentDateTime().toTime_t();)
+
                 chatTextBox.clear()
                 chatMsgList.positionViewAtEnd() // 保持底部
             }
