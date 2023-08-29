@@ -39,4 +39,25 @@ signals:
     void avatarchanged();
 };
 
+class User //储存用户信息
+{
+public:
+    User(int id,QString name,QString icon)
+    {
+        this->id=id;
+        this->name=name;
+        this->icon=icon;
+        qDebug()<<"构建User:"<<id<<name;
+    }
+
+    int id;
+    QString name;
+    QString icon;
+};
+
+class contactlist{
+    public:
+        QVector<User> contacts; // 定义users数组
+};
+
 #endif // USERINFO_H

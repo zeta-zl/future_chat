@@ -28,7 +28,7 @@ FluWindow {
     // 请求历史消息
     signal requestHistoryMessage(int curuserid)
     function sendRequest() {
-      requestHistoryMessage(curuser.id);
+        requestHistoryMessage(curuser.id);
     }
 
     // Loader加载不同组件，实现切换页面的功能
@@ -70,11 +70,11 @@ FluWindow {
             curuser.id = parseInt(userid)
             curuser.name=clientname
             //点击登录按钮后需要的操作
-            startPageLoader.source = "MainPage.qml"
+            //startPageLoader.source = "MainPage.qml"
             requestHistoryMessage(parseInt(userid))
-            // var component = Qt.createComponent("MainPage.qml");
-            // var win = component.createObject();
-            // win.show();
+            var component = Qt.createComponent("MainPage.qml");
+            var win = component.createObject(startPage);
+            win.show();
             startPage.visible = false;
         }else{
             // 失败窗口

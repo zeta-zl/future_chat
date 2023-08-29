@@ -37,12 +37,17 @@ private:
     QHostAddress m_ip;
     //用户信息
     int clientid = -1;
+    QString name="小强";
+
 private slots:
     void loginfunc(QString id,QString pwd);
     void regfunc(QString name,QString pwd);
     void addFriendfunc( QString friendId, QString verificationInfo );
     void setHistoryfunc( int userid );
+    void searchStrangerfunc(QString targetid,QString curid);
 
+signals:
+    void setHistoryBack();
 };
 
 #endif // FUTCLIENT_H

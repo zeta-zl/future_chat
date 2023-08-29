@@ -126,6 +126,9 @@ void FutClient::setHistoryBack(QJsonObject jsondata){
         qDebug()<<"MainPage"<<MainPage;
         QMetaObject::invokeMethod(MainPage,"setHistoryBack",Q_RETURN_ARG(QVariant,res),Q_ARG(QVariant,targetName),Q_ARG(QVariant,avatar),Q_ARG(QVariant,message),Q_ARG(QVariant,msgSender),Q_ARG(QVariant,timestamp));
     }
+    QObject* MainPage=root->findChild<QObject*>("MainPage_object");
+    QObject* addPage=MainPage->findChild<QObject*>("addPage_object");
+    QObject::connect(addPage,SIGNAL(searchStranger(QString,QString)),this,SIGNAL(searchStrangerfunc(QString,QString)));
 }
 
 //搜索陌生人

@@ -61,7 +61,7 @@ FluRectangle {
                 if(isNaN(inputid.text)){
                     console.log("输入非数字")
                     // 提醒用户只能输入纯数字账号
-                    showError("          只能输入纯数字账号")
+                    showError("只能输入纯数字账号")
                 }else{
                     userid=inputid.text
                     userpwd=inputpwd.text
