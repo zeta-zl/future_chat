@@ -72,10 +72,10 @@ FluWindow {
             //点击登录按钮后需要的操作
             //startPageLoader.source = "MainPage.qml"
             requestHistoryMessage(parseInt(userid))
-            var component = Qt.createComponent("MainPage.qml");
-            var win = component.createObject(startPage);
-            win.show();
-            startPage.visible = false;
+//            var component = Qt.createComponent("MainPage.qml");
+//            var win = component.createObject(startPage);
+//            win.show();
+//            startPage.visible = false;
         }else{
             // 失败窗口
             loginFailDialog.open()
