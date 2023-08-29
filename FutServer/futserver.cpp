@@ -61,7 +61,7 @@ ip VARCHAR( 255 )\
 );\
 ";
 
-string db_path = "future_chat2.db";
+string db_path = "future_chat1.db";
 
 static int init_database( DataBase& db ) {
     char* error_mes = nullptr;
@@ -323,7 +323,8 @@ void FutServer::setHistoryRespond(QJsonObject jsonData)
         QJsonObject jsonResult = loadMessageList(clientId);
         respondToClient(jsonResult, targetSocket);
     }
-    else{
+    else
+    {
         qDebug()<< "用户离线";
     }
 }
@@ -334,20 +335,38 @@ void FutServer::setHistoryRespond(QJsonObject jsonData)
 void FutServer::sendChatMessageRespond(QJsonObject jsonData)
 {
     //目标ID
-    int targetClientId = jsonData["targetClientId"].toInt();
-    QString message = jsonData["message"].toString();
-    // ..还需要其他信息，根据数据库以及客户端确定
-    // 例如，群聊or私聊，发送时间，发送者ID等
-    // 以下为私聊demo代码
-    if (clientMap.contains(targetClientId))
-    {
-        QTcpSocket *targetSocket = getSocketById(targetClientId);
-        QJsonObject jsonResult = jsonData;
-        respondToClient(jsonResult, targetSocket);
+    int clientId = jsonData["clientId"].toInt();
+    int targetId = jsonData["targetId"].toInt();
+    bool targetType = jsonData["targetType"].toBool();
+    QString content  = jsonData["content"].toString();
+    QString time = jsonData["time"].toString();
 
-        // 保存聊天记录至数据库
-//        friendModel->sendMessage();
+    // 保存聊天记录到数据库
+    QJsonObject jsonResult = saveMessage(clientId, targetId, targetType, content, time);
+
+    if(targetType) //私聊
+    {
+        // 若对方在线，则返回实时消息给接收方
+        if(clientMap.contains(targetId))
+        {
+            QTcpSocket *targetSocket = getSocketById(targetId);
+            respondToClient(jsonResult, targetSocket);
+        }
     }
+    else //群聊
+    {
+        // 获取该群聊的名单(注意：包括信息发送者)
+        QList<int> idList = getGroupMemberList(targetId);
+        for(int i = 0;i < idList.size();i++)
+        {
+            int receiver = idList.at(i);
+            // 若对方在线，则返回实时消息给接收方(不包括信息发送者)
+            if(clientMap.contains(receiver) && receiver != clientId)
+            {
+                QTcpSocket *targetSocket = getSocketById(receiver);
+                respondToClient(jsonResult, targetSocket);
+            }
+        }
     else{
         qDebug()<< "操作失败";
     }

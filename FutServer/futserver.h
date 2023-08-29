@@ -51,6 +51,8 @@ private:
     QJsonObject addAccount(QString userName, QString password);
     QJsonObject confirmLogin(int clientId, QString password);
     QJsonObject loadMessageList(int clientId);
+    QJsonObject saveMessage(int clientId, int targetId, bool targetType, QString content, QString time);
+    QList<int> getGroupMemberList(int groupId);
 
 };
 #endif // FUTSERVER_H
