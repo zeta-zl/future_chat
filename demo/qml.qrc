@@ -5,6 +5,10 @@
         <file>RegisterPage.qml</file>
         <file>StartPage.qml</file>
         <file>ChatPage.qml</file>
+        <file>GroupInfoPage.qml</file>
+        <file>GroupMemberPage.qml</file>
+        <file>AddPage.qml</file>
+        <file>GroupInvitePage.qml</file>
     </qresource>
     <qresource prefix="/images"/>
     <qresource prefix="/123"/>

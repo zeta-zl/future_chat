@@ -15,7 +15,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     LoginPage.cpp \
-    futclient.cpp \
+    futclient.cpp\
     userinfo.cpp
 
 RESOURCES += qml.qrc \

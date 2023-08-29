@@ -19,13 +19,13 @@ public:
     FutClient(QQmlApplicationEngine *engine, QObject *parent);
     void sendmsg(QString msg);
     void receivemsg();
-    void parsecommand(QJsonDocument jsonDoc);
+    void parsecommand( QJsonDocument jsonDoc );
 
     //c++ -> qml
-    void loginBack(QJsonObject jsondata);
-    void registerBack(QJsonObject jsondata);
-    void addFriendBack(QJsonObject jsondata);
-    void setHistoryBack(QJsonObject jsondata);
+    void loginBack( QJsonObject jsondata );
+    void registerBack( QJsonObject jsondata );
+    void addFriendBack( QJsonObject jsondata );
+    void setHistoryBack( QJsonObject jsondata );
 
 private:
     //前端通信engine
@@ -36,13 +36,12 @@ private:
     quint16 m_port;
     QHostAddress m_ip;
     //用户信息
-    int clientid=-1;
-
+    int clientid = -1;
 private slots:
     void loginfunc(QString id,QString pwd);
     void regfunc(QString name,QString pwd);
-    void addFriendfunc(QString friendId, QString verificationInfo);
-    void setHistoryfunc(int userid);
+    void addFriendfunc( QString friendId, QString verificationInfo );
+    void setHistoryfunc( int userid );
 
 };
 

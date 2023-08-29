@@ -12,15 +12,14 @@ FutClient::FutClient(QQmlApplicationEngine *engine, QObject *parent)
     this->engine=engine;
     //Qt对象树结构,root是qml全局的根节点，root指向startpage
     this->root=engine->rootObjects().first();
+    qDebug() << "root class:" << root->metaObject()->className();
 
     //端口 ip
     quint16 m_port=8899;
     m_ip=QHostAddress("127.0.0.1");
     m_tcpsocket=new QTcpSocket(this);
     m_tcpsocket->connectToHost(QHostAddress(m_ip),m_port);
-
     receivemsg();
-
     // 登录
     QObject::connect(root,SIGNAL(loginSignal(QString,QString)),this,SLOT(loginfunc(QString,QString)));
     // 注册
@@ -37,7 +36,6 @@ FutClient::FutClient(QQmlApplicationEngine *engine, QObject *parent)
 void FutClient::sendmsg(QString msg){
     m_tcpsocket->write(msg.toUtf8());
 }
-
 //从服务器接受信息
 void FutClient::receivemsg(){
     connect(m_tcpsocket,&QTcpSocket::readyRead,this,[=](){
@@ -60,7 +58,6 @@ void FutClient::parsecommand(QJsonDocument jsonDoc){
         setHistoryBack(jsonData);
     }
 }
-
 //登录
 void FutClient::loginfunc(QString id, QString pwd){
     QJsonObject jsonobj;
@@ -70,7 +67,6 @@ void FutClient::loginfunc(QString id, QString pwd){
     QString jsonstring=QJsonDocument(jsonobj).toJson();
     sendmsg(jsonstring);
 }
-
 void FutClient::loginBack(QJsonObject jsondata){
     bool result=jsondata["result"].toBool();
     if(!result){
@@ -84,7 +80,6 @@ void FutClient::loginBack(QJsonObject jsondata){
     QVariant res;
     QMetaObject::invokeMethod(root,"loginBack",Q_RETURN_ARG(QVariant,res),Q_ARG(QVariant,result));
 }
-
 //注册
 void FutClient::regfunc(QString name,QString pwd){
         QJsonObject jsonobj;

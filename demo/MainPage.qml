@@ -12,36 +12,52 @@ FluWindow {
     height: 800
     //backgroundColor: "white"
     title: qsTr("FutureTalk")
-    objectName: "MainPage_object"
-
-    function setHistoryBack(chatName,avatar,message,msgSender,timestamp) {
-       var e{
-            username: chatName; avatar: "images/test.png"; message: msgSender+":"+message;
-            newmsg: "3"; newmsgtime: timestamp; isdonotdisturb: false;
-        };
-        friendModel.append(e);
-    }
-
     ListModel {
             id: friendModel
+
             // 用户名； 头像； 新消息内容； 新消息数量； 是否开启免打扰
             ListElement {
-                username: "Alice"; avatar: "images/test.png"; message: "Hello!";
+                username: "Alice"; avatar: "images/test2.jpg"; message: "Hello!";
                 newmsg: "3"; newmsgtime: "三天前"; isdonotdisturb: false
             }
             ListElement {
-                username: "Bob"; avatar: "images/test.png"; message: "Hey there!";
+                username: "Bob"; avatar: "images/test2.jpg"; message: "Hey there!";
                 newmsg: "100"; newmsgtime: "2021/8/24"; isdonotdisturb: false
             }
 
             ListElement {
-                username: "生于未来"; avatar: "images/test.png"; message: "大黄：[捂脸哭]";
+                username: "生于未来"; avatar: "images/test2.jpg"; message: "大黄：[捂脸哭]";
                 newmsg: "100"; newmsgtime: "19:40"; isdonotdisturb: true
             }
             ListElement {
-                username: "生于未来"; avatar: "images/test.png"; message: "大黄：[捂脸哭]";
+                username: "生于未来"; avatar: "images/test2.jpg"; message: "大黄：[捂脸哭]";
                 newmsg: "100"; newmsgtime: "19:40"; isdonotdisturb: true
             }
+            ListElement {
+                username: "生于未来"; avatar: "images/test2.jpg"; message: "大黄：[捂脸哭]";
+                newmsg: "100"; newmsgtime: "19:40"; isdonotdisturb: true
+            }
+            ListElement {
+                username: "生于未来"; avatar: "images/test2.jpg"; message: "大黄：[捂脸哭]";
+                newmsg: "100"; newmsgtime: "19:40"; isdonotdisturb: true
+            }
+            ListElement {
+                username: "生于未来"; avatar: "images/test2.jpg"; message: "大黄：[捂脸哭]";
+                newmsg: "100"; newmsgtime: "19:40"; isdonotdisturb: true
+            }
+            ListElement {
+                username: "生于未来"; avatar: "images/test2.jpg"; message: "大黄：[捂脸哭]";
+                newmsg: "100"; newmsgtime: "19:40"; isdonotdisturb: true
+            }
+            ListElement {
+                username: "生于未来"; avatar: "images/test2.jpg"; message: "大黄：[捂脸哭]";
+                newmsg: "100"; newmsgtime: "19:40"; isdonotdisturb: true
+            }
+            ListElement {
+                username: "生于未来"; avatar: "images/test2.jpg"; message: "大黄：[捂脸哭]";
+                newmsg: "100"; newmsgtime: "19:40"; isdonotdisturb: true
+            }
+
     }
 
     FluArea {
@@ -64,7 +80,7 @@ FluWindow {
             Image {
                 width: 80
                 height: 80
-                source: "images/user.jpg"
+                source: "images/test3.jpg"
                 mipmap: true // 抗锯齿
             }
             layer.enabled : true
@@ -106,7 +122,13 @@ FluWindow {
         id : mainLoader
 
     }
-
+    FluWindow {
+        id:tooltipWindow
+        flags: Qt.Window | Qt.FramelessWindowHint
+        height: 400
+        width: 250
+        visible: false
+    }
     FluPivot {
         anchors.top: userCard.bottom
         anchors.horizontalCenter: parent.horizontalCenter
@@ -139,12 +161,23 @@ FluWindow {
                         MouseArea{
                             enabled: true
                             onClicked: {
+                                var screenPosition = rect.mapToItem(null, 0, 0); // 获取组件在屏幕上的绝对坐标
+                                        console.log("Screen Position: (" + screenPosition.x + ", " + screenPosition.y + ")");
                                 console.log("success" + item.isHover)
                             }
                             anchors.fill: parent
                             hoverEnabled: true
-                            onEntered: item.isHover = true
-                            onExited: item.isHover = false
+                            onEntered: {
+                                item.isHover = true
+                                tooltipWindow.x = 0; // 位移使得悬浮窗口稍微偏离鼠标位置
+                                tooltipWindow.y = 0;
+                                tooltipWindow.visible = true;
+                            }
+                            onExited: {
+                                item.isHover = false
+                                tooltipWindow.visible = false;
+                            }
+
                         }
                         states: [
                                         State { name: "true"; PropertyChanges { target: item; color : "#DDDDDD" } },
