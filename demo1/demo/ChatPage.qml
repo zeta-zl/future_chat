@@ -127,6 +127,8 @@ FluWindow{
             }
     }
 
+
+
     FluRectangle { // 聊天记录区
         id: chatMsgArea
         width: parent.width

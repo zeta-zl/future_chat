@@ -25,10 +25,6 @@ FluWindow {
     property string regpwd2: ""
     signal regSignal(string regname, string regpwd)
 
-    // 请求历史消息信号
-    signal requestHistoryMessage(int curuserid)
-
-
 
     // Loader加载不同组件，实现切换页面的功能
     Loader{
@@ -45,8 +41,6 @@ FluWindow {
             height: 480
             //anchors.centerIn: parent
         }
-
-
     }
 
     // 3.注册-Component
@@ -59,34 +53,78 @@ FluWindow {
         }
     }
 
+    FluWindow {
+        id: loginFailWin
+        width: 300
+        height: 200
+        launchMode: FluWindow.Standard
+    }
+
     function loginBack(result){
         if(result){
-            curuser.id = parseInt(userid)
             //点击登录按钮后需要的操作
             startPageLoader.source = "MainPage.qml"
-            requestHistoryMessage(parseInt(userid))
             // var component = Qt.createComponent("MainPage.qml");
             // var win = component.createObject();
             // win.show();
-            // startPage.visible = false;
+            startPage.visible = false;
         }else{
             // 失败窗口
+            loginFailDialog.open()
         }
     }
 
-    function registerBack(id){
-        if(id){
-            //注册成功弹出窗口显示id
+    Loader {
+        id : startPageLoader
+    }
 
-            //重新回到登陆界面
+    function registerBack(id){
+        console.log("qml registerBack is called")
+        if(id){
+            //成功显示id
+            regDialog.open()
+
+
+            //显示登陆界面
             myLoader.sourceComponent = loginPage
             startPage.width = 400
             startPage.height = 480
         }else{
             // 失败窗口
+            regFailDialog.open()
         }
     }
-    Loader {
-           id : startPageLoader
-       }
+
+    FluContentDialog {
+        id:regDialog
+        title:"注册成功！"
+        message:"您的ID为："
+        buttonFlags: FluContentDialog.PositiveButton
+        positiveText:"确定"
+        onPositiveClicked:{
+            myLoader.sourceComponent = loginPage
+        }
+    }
+
+    FluContentDialog {
+        id:regFailDialog
+        title:"注册失败！"
+        message:"请重试..."
+        buttonFlags: FluContentDialog.PositiveButton
+        positiveText:"确定"
+        onPositiveClicked:{
+            myLoader.sourceComponent = regPage
+        }
+    }
+
+    FluContentDialog {
+        id:loginFailDialog
+        title:"登录失败！"
+        message:"请检查网络后重试..."
+        buttonFlags: FluContentDialog.PositiveButton
+        positiveText:"确定"
+        onPositiveClicked:{
+            myLoader.sourceComponent = loginPage
+        }
+    }
 }

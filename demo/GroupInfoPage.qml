@@ -66,7 +66,7 @@ FluWindow{
 
         FluFilledButton{
             text: "完成"
-            font.pixelSize: 22
+            font.pixelSize: 18
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 30
             anchors.horizontalCenter: parent.horizontalCenter

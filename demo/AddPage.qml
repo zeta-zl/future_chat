@@ -89,7 +89,7 @@ FluWindow {
                     Image {
                         width: parent.width
                         height: parent.height
-                        source: "images/user.jpg"
+                        source: "images/test2.png"
                     }
                     layer.enabled : true
                     layer.effect: DropShadow {

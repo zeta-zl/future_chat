@@ -59,19 +59,30 @@ FluRectangle {
             onClicked: {
                 //检查用户账号是否为纯数字
                 if(isNaN(inputid.text)){
-                    showError("只能输入纯数字账号")
+                    console.log("输入非数字")
+                    // 提醒用户只能输入纯数字账号
+                    showError("          只能输入纯数字账号")
                 }else{
                     userid=inputid.text
                     userpwd=inputpwd.text
-                    if(userid==""){
-                        showError("账号不能为空")
-                    }else if(userpwd==""){
-                        showError("密码不能为空")
-                    }
                     //发送登录信号
+                    console.log(userid,userpwd,"登录")
                     loginSignal(userid,userpwd)
                 }
+
+                //点击登录按钮后需要的操作
+                //用于服务端未打开时，记得删除
+
+                loginPageLoader.source = "MainPage.qml"
+                //var component = Qt.createComponent("MainPage.qml");
+                //var win = component.createObject();
+                //win.show();
+                startPage.visible = false;
             }
+        }
+
+        Loader {
+            id : loginPageLoader
         }
 
         FluFilledButton{
@@ -105,7 +116,6 @@ FluRectangle {
             startPage.visible = false;
         }
     }
-
 }
 
 

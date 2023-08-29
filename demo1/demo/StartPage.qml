@@ -98,7 +98,7 @@ FluWindow {
     FluContentDialog {
         id:regDialog
         title:"注册成功！"
-        message:"您的ID为：" + id
+        message:"您的ID为："
         buttonFlags: FluContentDialog.PositiveButton
         positiveText:"确定"
         onPositiveClicked:{

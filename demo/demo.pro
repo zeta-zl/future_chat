@@ -15,8 +15,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     LoginPage.cpp \
-    futclient.cpp \
-    userinfo.cpp
+    futclient.cpp
 
 RESOURCES += qml.qrc \
     res.qrc
@@ -33,10 +32,4 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 HEADERS += \
-    futclient.h \
-    userinfo.h
-
-DISTFILES += \
-    GroupInfoPage.qml \
-    GroupInvitePage.qml \
-    GroupMemberPage.qml
+    futclient.h

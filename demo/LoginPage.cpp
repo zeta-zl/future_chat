@@ -4,7 +4,6 @@
 #include <QQmlContext>
 
 #include "futclient.h"
-#include "userinfo.h"
 
 int main(int argc, char *argv[])
 {
@@ -12,13 +11,9 @@ int main(int argc, char *argv[])
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QGuiApplication app(argc, argv);
 
-    userinfo curuser;
-
     // 创建了一个QQmlApplicationEngine类的实例，用于加载和运行QML（Qt Meta-Object Language）界面。
     QQmlApplicationEngine engine;
     QQmlContext* root = engine.rootContext();
-
-    root->setContextProperty("curuser",&curuser);
 
     // 指定资源文件
     const QUrl url(QStringLiteral("qrc:/StartPage.qml"));
