@@ -14,22 +14,10 @@ FluWindow {
     title: qsTr("FutureTalk")
     objectName: "MainPage_object"
 
-        function setHistoryBack(chatName,avatar,message,msgSender,timestamp) {
-           var e{
-                username: chatName; avatar: "images/test.png"; message: msgSender+":"+message;
-                newmsg: "3"; newmsgtime: timestamp; isdonotdisturb: false;
-            };
-            friendModel.append(e);
-        }
-
-    ListModel {
-            id: friendModel
-
     function setHistoryBack(chatName,avatar,message,msgSender,timestamp) {
-        console.log(chatName,avatar,message,msgSender,timestamp)
+        console.log(chatName,avatar,message,msgSender,timestamp)   
         friendModel.append({"username": chatName, "avatar": "images/test.png", "message": msgSender+":"+message,
-                            "newmsg": "3", "newmsgtime": timestamp, "isdonotdisturb": false
-                           })
+                            "newmsg": "3", "newmsgtime": timestamp, "isdonotdisturb": false})
     }
 
     ListModel {
