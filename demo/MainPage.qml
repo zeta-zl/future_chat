@@ -12,6 +12,16 @@ FluWindow {
     height: 800
     //backgroundColor: "white"
     title: qsTr("FutureTalk")
+    objectName: "MainPage_object"
+
+        function setHistoryBack(chatName,avatar,message,msgSender,timestamp) {
+           var e{
+                username: chatName; avatar: "images/test.png"; message: msgSender+":"+message;
+                newmsg: "3"; newmsgtime: timestamp; isdonotdisturb: false;
+            };
+            friendModel.append(e);
+        }
+
     ListModel {
             id: friendModel
 

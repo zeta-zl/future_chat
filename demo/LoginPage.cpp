@@ -2,6 +2,8 @@
 #include <QQmlApplicationEngine>
 #include <QSettings>
 #include <QQmlContext>
+#include "userinfo.h"
+
 
 #include "futclient.h"
 
