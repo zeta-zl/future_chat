@@ -14,7 +14,7 @@ FutClient::FutClient(QQmlApplicationEngine *engine, QObject *parent)
     this->root=engine->rootObjects().first();
 
     //端口 ip
-    quint16 m_port=9999;
+    quint16 m_port=8899;
     m_ip=QHostAddress("127.0.0.1");
     m_tcpsocket=new QTcpSocket(this);
     m_tcpsocket->connectToHost(QHostAddress(m_ip),m_port);
