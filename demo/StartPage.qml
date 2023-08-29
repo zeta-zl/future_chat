@@ -25,6 +25,11 @@ FluWindow {
     property string regpwd2: ""
     signal regSignal(string regname, string regpwd)
 
+    // 请求历史消息
+    signal requestHistoryMessage(int curuserid)
+    function sendRequest() {
+      requestHistoryMessage(curuser.id);
+    }
 
     // Loader加载不同组件，实现切换页面的功能
     Loader{
@@ -60,10 +65,13 @@ FluWindow {
         launchMode: FluWindow.Standard
     }
 
-    function loginBack(result){
+    function loginBack(result,clientname){
         if(result){
+            curuser.id = parseInt(userid)
+            curuser.name=clientname
             //点击登录按钮后需要的操作
             startPageLoader.source = "MainPage.qml"
+            requestHistoryMessage(parseInt(userid))
             // var component = Qt.createComponent("MainPage.qml");
             // var win = component.createObject();
             // win.show();
@@ -83,8 +91,6 @@ FluWindow {
         if(id){
             //成功显示id
             regDialog.open()
-
-
             //显示登陆界面
             myLoader.sourceComponent = loginPage
             startPage.width = 400
@@ -98,7 +104,7 @@ FluWindow {
     FluContentDialog {
         id:regDialog
         title:"注册成功！"
-        message:"您的ID为："
+        message:"您的ID为："+userid
         buttonFlags: FluContentDialog.PositiveButton
         positiveText:"确定"
         onPositiveClicked:{

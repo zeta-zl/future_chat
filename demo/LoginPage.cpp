@@ -6,6 +6,7 @@
 
 
 #include "futclient.h"
+#include "userinfo.h"
 
 int main(int argc, char *argv[])
 {

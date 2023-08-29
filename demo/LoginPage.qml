@@ -73,7 +73,7 @@ FluRectangle {
                 //点击登录按钮后需要的操作
                 //用于服务端未打开时，记得删除
 
-                loginPageLoader.source = "MainPage.qml"
+                //loginPageLoader.source = "MainPage.qml"
                 //var component = Qt.createComponent("MainPage.qml");
                 //var win = component.createObject();
                 //win.show();

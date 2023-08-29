@@ -25,49 +25,24 @@ FluWindow {
     ListModel {
             id: friendModel
 
+    function setHistoryBack(chatName,avatar,message,msgSender,timestamp) {
+        console.log(chatName,avatar,message,msgSender,timestamp)
+        friendModel.append({"username": chatName, "avatar": "images/test.png", "message": msgSender+":"+message,
+                            "newmsg": "3", "newmsgtime": timestamp, "isdonotdisturb": false
+                           })
+    }
+
+    ListModel {
+            id: friendModel
             // 用户名； 头像； 新消息内容； 新消息数量； 是否开启免打扰
-            ListElement {
-                username: "Alice"; avatar: "images/test2.jpg"; message: "Hello!";
-                newmsg: "3"; newmsgtime: "三天前"; isdonotdisturb: false
-            }
-            ListElement {
-                username: "Bob"; avatar: "images/test2.jpg"; message: "Hey there!";
-                newmsg: "100"; newmsgtime: "2021/8/24"; isdonotdisturb: false
-            }
-
-            ListElement {
-                username: "生于未来"; avatar: "images/test2.jpg"; message: "大黄：[捂脸哭]";
-                newmsg: "100"; newmsgtime: "19:40"; isdonotdisturb: true
-            }
-            ListElement {
-                username: "生于未来"; avatar: "images/test2.jpg"; message: "大黄：[捂脸哭]";
-                newmsg: "100"; newmsgtime: "19:40"; isdonotdisturb: true
-            }
-            ListElement {
-                username: "生于未来"; avatar: "images/test2.jpg"; message: "大黄：[捂脸哭]";
-                newmsg: "100"; newmsgtime: "19:40"; isdonotdisturb: true
-            }
-            ListElement {
-                username: "生于未来"; avatar: "images/test2.jpg"; message: "大黄：[捂脸哭]";
-                newmsg: "100"; newmsgtime: "19:40"; isdonotdisturb: true
-            }
-            ListElement {
-                username: "生于未来"; avatar: "images/test2.jpg"; message: "大黄：[捂脸哭]";
-                newmsg: "100"; newmsgtime: "19:40"; isdonotdisturb: true
-            }
-            ListElement {
-                username: "生于未来"; avatar: "images/test2.jpg"; message: "大黄：[捂脸哭]";
-                newmsg: "100"; newmsgtime: "19:40"; isdonotdisturb: true
-            }
-            ListElement {
-                username: "生于未来"; avatar: "images/test2.jpg"; message: "大黄：[捂脸哭]";
-                newmsg: "100"; newmsgtime: "19:40"; isdonotdisturb: true
-            }
-            ListElement {
-                username: "生于未来"; avatar: "images/test2.jpg"; message: "大黄：[捂脸哭]";
-                newmsg: "100"; newmsgtime: "19:40"; isdonotdisturb: true
-            }
-
+//            ListElement {
+//                username: "Alice"; avatar: "images/test2.jpg"; message: "Hello!";
+//                newmsg: "3"; newmsgtime: "三天前"; isdonotdisturb: false
+//            }
+//            ListElement {
+//                username: "Bob"; avatar: "images/test2.jpg"; message: "Hey there!";
+//                newmsg: "100"; newmsgtime: "2021/8/24"; isdonotdisturb: false
+//            }
     }
 
     FluArea {
