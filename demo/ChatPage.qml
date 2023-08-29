@@ -24,10 +24,7 @@ FluWindow{
             anchors.leftMargin: 15
             anchors.verticalCenter: parent.verticalCenter
             onClicked: {
-                var component = Qt.createComponent("MainPage.qml");
-                var win = component.createObject();
-                win.show();
-                chatPage.visible = false
+                chatPage.close()
             }
         }
 
@@ -36,7 +33,7 @@ FluWindow{
             anchors.leftMargin: 15
             anchors.top: parent.top
             anchors.topMargin: 5
-            text: qsTr("生于未来")  // 需要接口
+            text: model.username
             font.pixelSize: 30
         }
 
@@ -45,7 +42,12 @@ FluWindow{
             anchors.leftMargin: 15
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 5
-            text: qsTr("6人")  // 需要接口
+            text: {
+                if(model.groupmember){
+                    model.groupmember + "人"
+                }
+            }
+
             font.pixelSize: 18
             color: "#888888"
         }
@@ -57,6 +59,7 @@ FluWindow{
             anchors.right: parent.right
             anchors.rightMargin: 15
             anchors.verticalCenter: parent.verticalCenter
+            visible: model.isgroup
 
 
             items:[
@@ -65,7 +68,7 @@ FluWindow{
 
                     onClicked: {
                          var component = Qt.createComponent("GroupInfoPage.qml");
-                         var win = component.createObject();
+                         var win = component.createObject(chatPage);
                          win.show();
                     }
                 },
@@ -73,7 +76,7 @@ FluWindow{
                     text:"查看群成员"
                     onClicked: {
                         var component = Qt.createComponent("GroupMemberPage.qml");
-                        var win = component.createObject();
+                        var win = component.createObject(chatPage);
                         win.show();
                     }
                 },
@@ -81,7 +84,7 @@ FluWindow{
                     text:"邀请好友"
                     onClicked: {
                         var component = Qt.createComponent("GroupInvitePage.qml");
-                        var win = component.createObject();
+                        var win = component.createObject(chatPage);
                         win.show();
                     }
                 },
@@ -126,8 +129,6 @@ FluWindow{
                 self: false
             }
     }
-
-
 
     FluRectangle { // 聊天记录区
         id: chatMsgArea
