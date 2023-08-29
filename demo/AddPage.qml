@@ -12,6 +12,12 @@ FluWindow {
     height: 200
     visible: true
     title: qsTr("添加好友")
+    objectName: "addPage_object"
+
+    // 搜索陌生人
+    property string strangerId: ""
+    signal searchStanger(string strangerId,string curid)
+
     Item{
         id:r
         width: 300
@@ -37,6 +43,8 @@ FluWindow {
             onClicked: {
                 add.height = 250
                 searchResult.visible = true
+                strangerId=text_box.text
+                searchStanger(strangerId,curuser.id)
             }
         }
 

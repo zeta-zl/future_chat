@@ -370,6 +370,8 @@ void FutServer::sendChatMessageRespond(QJsonObject jsonData)
                 respondToClient(jsonResult, targetSocket);
             }
         }
+    else{
+        qDebug()<< "操作失败";
     }
 }
 

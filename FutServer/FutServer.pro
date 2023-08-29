@@ -25,7 +25,7 @@ SOURCES += \
     ./database/sqlite_functions/sqlite3.c \
     ./database/database_operations/init_database.cpp \
     ./database/database_operations/test_database.cpp \
-    ./database/database_operations/test_database_operations.cpp \
+    ./database/database_operations/test_database_operations.cpp
 
 HEADERS += \
     futserver.h \

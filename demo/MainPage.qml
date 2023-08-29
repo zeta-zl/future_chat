@@ -16,23 +16,58 @@ FluWindow {
     objectName: "MainPage_object"
 
     function setHistoryBack(chatName,avatar,message,msgSender,timestamp) {
-        console.log(chatName,avatar,message,msgSender,timestamp)
-        friendModel.append({"username": chatName, "avatar": "images/test.png", "message": msgSender+":"+message,
-                            "newmsg": "3", "newmsgtime": timestamp, "isdonotdisturb": false})
-    }
+            console.log(chatName,avatar,message,msgSender,timestamp)
+            friendModel.append({"username": chatName, "avatar": "images/test.png", "message": msgSender+":"+message,
+                                "newmsg": "3", "newmsgtime": timestamp, "isdonotdisturb": false})
+        }
+
+//        function setHistoryBack(chatName,avatar,message,msgSender,timestamp) {
+//           var e{
+//                username: chatName; avatar: "images/test.png"; message: msgSender+":"+message;
+//                newmsg: "3"; newmsgtime: timestamp; isdonotdisturb: false;
+//            };
+//            friendModel.append(e);
+//        }
+
+//    ListModel {
+//            id: friendModel
+
+//    function setHistoryBack(chatName,avatar,message,msgSender,timestamp) {
+//        console.log(chatName,avatar,message,msgSender,timestamp)
+//        friendModel.append({"username": chatName, "avatar": "images/test.png", "message": msgSender+":"+message,
+//                            "newmsg": "3", "newmsgtime": timestamp, "isdonotdisturb": false
+//                           })
+//    }
 
     ListModel {
             id: friendModel
-            // 用户名； 头像； 新消息内容； 新消息数量； 是否开启免打扰
-//            ListElement {
-//                username: "Alice"; avatar: "images/test2.jpg"; message: "Hello!";
-//                newmsg: "3"; newmsgtime: "三天前"; isdonotdisturb: false
-//            }
+            // 用户名； 头像； 新消息内容； 新消息数量； 是否开启免打扰; 是否是群聊
+            ListElement {
+                username: "Alice"; avatar: "images/test2.jpg"; message: "Hello!";
+                newmsg: "3"; newmsgtime: "三天前"; isdonotdisturb: false;
+                isgroup: false
+            }
 //            ListElement {
 //                username: "Bob"; avatar: "images/test2.jpg"; message: "Hey there!";
 //                newmsg: "100"; newmsgtime: "2021/8/24"; isdonotdisturb: false
 //            }
     }
+
+    ListModel {
+            id: groupModel
+            // 用户名； 头像； 新消息内容； 新消息数量； 是否开启免打扰; 是否是群聊; 群聊人数
+            ListElement {
+                username: "sywl"; avatar: "images/test2.jpg"; message: "Hello!";
+                newmsg: "3"; newmsgtime: "三天前"; isdonotdisturb: false;
+                isgroup: true; groupmember: "10"
+            }
+//            ListElement {
+//                username: "Bob"; avatar: "images/test2.jpg"; message: "Hey there!";
+//                newmsg: "100"; newmsgtime: "2021/8/24"; isdonotdisturb: false
+//            }
+    }
+
+
 
     FluArea {
         color: Qt.rgba(251/255,251/255,253/255,1)
@@ -209,9 +244,9 @@ FluWindow {
                         MouseArea{
                             enabled: true
                             onClicked: {
-                                var screenPosition = rect.mapToItem(null, 0, 0); // 获取组件在屏幕上的绝对坐标
-                                        console.log("Screen Position: (" + screenPosition.x + ", " + screenPosition.y + ")");
-                                console.log("success" + item.isHover)
+                                var component = Qt.createComponent("ChatPage.qml");
+                                var win = component.createObject(root);
+                                win.show();
                             }
                             anchors.fill: parent
                             hoverEnabled: true
@@ -321,7 +356,7 @@ FluWindow {
                             onExited: item_.isHover = false
                             onDoubleClicked: {
                                 var component = Qt.createComponent("ChatPage.qml");
-                                var win = component.createObject();
+                                var win = component.createObject(root);
                                 win.show();
                             }
                         }
@@ -394,8 +429,104 @@ FluWindow {
         }
         FluPivotItem{
             title:"  群聊  "
-            contentItem:FluText{
-                text:"这里是群聊"
+            contentItem:ListView {
+                width: parent.width
+                height: parent.height
+                clip: true
+                model: groupModel
+                ScrollBar.vertical: ScrollBar {
+                    policy: ScrollBar.AsNeeded
+                }
+                delegate: Item {
+
+                    width: parent.width
+                    height: 80
+
+                    Rectangle { // 联系人条
+                        id: item2_
+                        property bool isHover: false
+
+                        width: parent.width
+                        height: 80
+                        color: isHover == true ? "#DDDDDD" : Qt.rgba(251/255,251/255,253/255,1)
+                        state: isHover
+                        MouseArea{
+                            enabled: true
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            onEntered: item2_.isHover = true
+                            onExited: item2_.isHover = false
+                            onDoubleClicked: {
+                                var component = Qt.createComponent("ChatPage.qml");
+                                var win = component.createObject(root);
+                                win.show();
+                            }
+                        }
+                        states: [
+                                        State { name: "true"; PropertyChanges { target: item2_; color : "#DDDDDD" } },
+                                        State { name: "false"; PropertyChanges { target: item2_; color : Qt.rgba(251/255,251/255,253/255,1) }}
+                        ]
+                        transitions: [
+                                        Transition { ColorAnimation { to: "#DDDDDD"; duration: 80 } },
+                                        Transition { ColorAnimation { to: Qt.rgba(251/255,251/255,253/255,1); duration: 80  } }
+                        ]
+                        Rectangle // 头像
+                        {
+                            id:profilePic2_
+                            width: 60
+                            height: 60
+                            radius: 8
+                            anchors.bottom: parent.bottom
+                            anchors.bottomMargin: 5
+                            anchors.left: parent.left
+                            anchors.leftMargin: 5
+
+                            FluBadge{
+                                z:99
+                                count: model.newmsg // 圆点数字
+                                isDot: model.isdonotdisturb
+                                color: Qt.rgba(255/255,0/255,0/255,1)
+                            }
+
+                            Image {
+                                id: image2_
+                                width: 60
+                                height: 60
+                                source: model.avatar
+                                mipmap: true // 抗锯齿
+                            }
+                        }
+
+                        Text {
+                            text: model.username
+                            font.pixelSize: 18
+                            anchors.top: parent.top
+                            anchors.topMargin: 15
+                            anchors.left: profilePic2_.right
+                            anchors.leftMargin: 20
+                        }
+
+//                        Text {
+//                            text: model.message
+//                            font.pixelSize: 15
+//                            color: "#888888"
+//                            anchors.bottom: parent.bottom
+//                            anchors.bottomMargin: 15
+//                            anchors.left: profilePic.right
+//                            anchors.leftMargin: 20
+//                        }
+
+//                        Text {
+//                            text: model.newmsgtime
+//                            font.pixelSize: 15
+//                            color: "#888888"
+//                            anchors.top: parent.top
+//                            anchors.topMargin: 15
+//                            anchors.right: parent.right
+//                            anchors.rightMargin: 15
+//                        }
+                    }
+                }
             }
         }
     }

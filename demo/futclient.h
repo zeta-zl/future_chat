@@ -26,6 +26,7 @@ public:
     void registerBack( QJsonObject jsondata );
     void addFriendBack( QJsonObject jsondata );
     void setHistoryBack( QJsonObject jsondata );
+    void sendChatMessageBack(QJsonObject jsondata);
 
 private:
     //前端通信engine
@@ -37,12 +38,17 @@ private:
     QHostAddress m_ip;
     //用户信息
     int clientid = -1;
+    QString name="小强";
+
 private slots:
     void loginfunc(QString id,QString pwd);
     void regfunc(QString name,QString pwd);
     void addFriendfunc( QString friendId, QString verificationInfo );
     void setHistoryfunc( int userid );
-
+    void searchStrangerfunc(QString targetid,QString curid);
+    void sendChatMessagefunc(QString clientId, QString targetId, QString targetType, QString content, QString time) ;
+signals:
+    void setHistoryBack();
 };
 
 #endif // FUTCLIENT_H
