@@ -45,12 +45,8 @@ private slots:
     void regfunc(QString name,QString pwd);
     void addFriendfunc( QString friendId, QString verificationInfo );
     void setHistoryfunc( int userid );
-<<<<<<< HEAD
     void searchStrangerfunc(QString targetid,QString curid);
-=======
     void sendChatMessagefunc(QString clientId, QString targetId, QString targetType, QString content, QString time) ;
->>>>>>> ea1cff82de0dd0d2ef882c5adb1fe13f5c9c425e
-
 signals:
     void setHistoryBack();
 };

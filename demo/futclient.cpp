@@ -28,14 +28,12 @@ FutClient::FutClient(QQmlApplicationEngine *engine, QObject *parent)
     QObject* MainPage=root->findChild<QObject*>("MainPage_object");
     qDebug()<<"构造函数中MainPage"<<MainPage;
     QObject::connect(root,SIGNAL(requestHistoryMessage(int)),this,SLOT(setHistoryfunc(int)));
-<<<<<<< HEAD
-=======
+
     // 添加好友
     QObject::connect(root,SIGNAL(addFriendSignal(QString,QString)),this,SLOT(addFriendfunc(QString,QString)));
     // 返回消息
     QObject::connect(root,SIGNAL(sendChatMessageSignal(QString,QString,QString,QString,QString)),\
                      this,SLOT(sendChatMessagefunc(QString,QString,QString,QString,QString)));
->>>>>>> ea1cff82de0dd0d2ef882c5adb1fe13f5c9c425e
 }
 
 //向服务器发送消息
