@@ -28,6 +28,14 @@ FutClient::FutClient(QQmlApplicationEngine *engine, QObject *parent)
     QObject* MainPage=root->findChild<QObject*>("MainPage_object");
     qDebug()<<"构造函数中MainPage"<<MainPage;
     QObject::connect(root,SIGNAL(requestHistoryMessage(int)),this,SLOT(setHistoryfunc(int)));
+<<<<<<< HEAD
+=======
+    // 添加好友
+    QObject::connect(root,SIGNAL(addFriendSignal(QString,QString)),this,SLOT(addFriendfunc(QString,QString)));
+    // 返回消息
+    QObject::connect(root,SIGNAL(sendChatMessageSignal(QString,QString,QString,QString,QString)),\
+                     this,SLOT(sendChatMessagefunc(QString,QString,QString,QString,QString)));
+>>>>>>> ea1cff82de0dd0d2ef882c5adb1fe13f5c9c425e
 }
 
 //向服务器发送消息
@@ -54,6 +62,8 @@ void FutClient::parsecommand(QJsonDocument jsonDoc){
         addFriendBack(jsonData);
     } else if(request=="setHistoryBack"){
         setHistoryBack(jsonData);
+    } else if(request=="sendChatMessageBack"){
+        sendChatMessageBack(jsonData);
     }
 }
 //登录
@@ -153,8 +163,37 @@ void FutClient::addFriendBack(QJsonObject jsondata){
     bool id=jsondata["result"].toInt();
     //调用QML函数
     QVariant res;
-    QMetaObject::invokeMethod(root,"add_friend",Q_RETURN_ARG(QVariant,res),Q_ARG(QVariant,id));
+    QMetaObject::invokeMethod(root,"addFriendBack",Q_RETURN_ARG(QVariant,res),Q_ARG(QVariant,id));
 }
+
+void FutClient::sendChatMessagefunc(QString clientId, QString targetId, QString targetType, QString content, QString time) {
+    QJsonObject jsonobj;
+    jsonobj["request"] = "sendChatMessage";
+    jsonobj["clientId"] = clientId;
+    jsonobj["targetId"] = targetId;
+    jsonobj["targetType"] = targetType;
+    jsonobj["content"] = content;
+    jsonobj["time"] = time;
+
+    QString jsonstring = QJsonDocument(jsonobj).toJson();
+    qDebug()<<jsonstring.toStdString().c_str();
+    sendmsg(jsonstring);
+}
+
+void FutClient::sendChatMessageBack(QJsonObject jsondata) {
+    QString groupId = jsondata["groupId"].toString();
+    QString sendId = jsondata["sendId"].toString();
+    QString content = jsondata["content"].toString();
+    QString time = jsondata["time"].toString();
+
+    // Call QML function
+    QVariant res;
+    QMetaObject::invokeMethod(root, "sendChatMessageBack", Q_RETURN_ARG(QVariant, res),
+                              Q_ARG(QVariant, groupId), Q_ARG(QVariant, sendId),
+                              Q_ARG(QVariant, content), Q_ARG(QVariant, time));
+}
+
+
 
 
 

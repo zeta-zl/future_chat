@@ -1,0 +1,257 @@
+#include "futserver.h"
+#include "ui_futserver.h"
+
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
+#include <QDateTime>
+
+QJsonObject FutServer::addAccount(QString userName, QString password)
+{
+    QJsonObject jsonObj;
+    // 插入
+    InsertResult insResult = InsertResult();
+    QString sql;
+    sql = QString("insert into user_info(user_name, password) values ('%1', '%2')").arg(userName, password);
+    qDebug() << sql;
+    insResult.executeInsert( db, sql.toStdString());
+
+    // 查询注册得到的id
+    SelectResult selResult = SelectResult();
+    sql = "select max(account) from user_info";
+    selResult.executeSelect( db, sql.toStdString());
+    auto result = convert_select_result_to_vector(selResult);
+    string id = "0";
+    bool insertResult = insResult.check_result();
+    if(insertResult){
+       qDebug() << "注册成功";
+       id = result[0][0];
+
+       // 注册成功，在数据库中添加自己为好友，(并添加初始聊天记录)
+       QString SQLId = QString::fromStdString(id);
+       QString nick_name = QString::fromStdString("我");
+       QDateTime currentTime = QDateTime::currentDateTime();
+       QString addTime = currentTime.toString("yyyy-MM-dd HH:mm:ss");
+       QString status = QString::fromStdString("1");
+       InsertResult addSelfFriend = InsertResult();
+       sql = QString("insert into user_friends(client_account, friend_account, friend_nickname, add_time, status) values ('%1', '%2', '%3', '%4', '%5')").arg(SQLId, SQLId, nick_name, addTime, status);
+       addSelfFriend.executeInsert(db, sql.toStdString());
+    }
+    else{
+        qDebug() << "注册失败";
+    }
+
+    jsonObj.insert("request","registerBack"); //反馈类型
+    jsonObj.insert("id", QString::fromStdString(id)); // 分配的id,注册失败返回0
+    jsonObj.insert("result",insertResult);// 注册成功与否
+
+    return jsonObj;
+}
+
+
+QJsonObject FutServer::confirmLogin(int clientId, QString password)
+{
+    QJsonObject jsonObj;
+    QString sql;
+    sql = QString("select password, user_name from user_info where account = %1").arg(clientId);
+    // 查询对应的密码
+    SelectResult selResult = SelectResult();
+    selResult.executeSelect( db, sql.toStdString());
+
+    auto result = convert_select_result_to_vector(selResult);
+//    qDebug() << result.size();
+    if(result.size() == 0){
+        qDebug() << "登录失败，账号不存在！";
+        jsonObj.insert("request","loginBack"); //登录反馈
+        jsonObj.insert("result", false);//
+        jsonObj.insert("userName", NULL);
+        return jsonObj;
+    }
+
+    QString correctPassword= QString::fromStdString(result[0][0]);
+    QString userName = QString::fromStdString(result[0][1]);
+    if(correctPassword == password){
+        qDebug() << "登录成功";
+    }
+    else{
+        qDebug() << "密码错误，登陆失败";
+    }
+    jsonObj.insert("request","loginBack"); //登录反馈
+    jsonObj.insert("result", correctPassword == password);// 密码是否一致
+    jsonObj.insert("userName", userName);
+
+    return jsonObj;
+}
+
+inline void swap(QJsonValueRef v1, QJsonValueRef v2)
+{
+    QJsonValue temp(v1);
+    v1 = QJsonValue(v2);
+    v2 = temp;
+}
+
+QJsonObject FutServer::loadMessageList(int clientId)
+{
+    QJsonObject jsonObj;
+    QJsonArray messages;
+
+    QString sql;
+    sql = QString("SELECT * FROM ("
+            "SELECT "
+            "targetId,"
+            "uii.user_name As targetName,"
+            "targetType,"
+            "uii.avatar_path,"
+            "message,"
+            "msgSender,"
+            "msgTime "
+            "FROM ("
+                    "SELECT "
+                    "CASE WHEN fml.client_account = %1 THEN fml.friend_account ELSE fml.client_account END AS targetId, "
+                    "true AS targetType,"
+                    "fml.content AS message,"
+                    "CASE WHEN fml.client_account = %1 THEN 'You' ELSE ui.user_name END AS msgSender,"
+                    "fml.time AS msgTime "
+                    "FROM friend_message_library fml "
+                    "JOIN user_info ui ON fml.client_account = ui.account "
+                    "WHERE fml.client_account = %1 OR fml.friend_account = %1) t1 "
+                    "JOIN user_info uii ON t1.targetId = uii.account "
+                    "ORDER BY msgTime DESC) GROUP BY targetId;").arg(clientId);
+
+    // 查询私聊信息
+    SelectResult selFriendResult = SelectResult();
+    selFriendResult.executeSelect( db, sql.toStdString());
+    if(selFriendResult.check_result())
+    {
+        qDebug() << "消息列表初始化成功" ;
+    }
+    else
+    {
+        qDebug() << "消息列表初始化失败" ;
+    }
+    auto friResult = convert_select_result_to_vector(selFriendResult);
+    if(friResult.size())
+    {
+        for ( int i = 0; i < selFriendResult.row; i++ ){
+             QJsonObject message;
+             message.insert("targetId", QString::fromStdString(friResult[i][0]));
+             message.insert("targetName", QString::fromStdString(friResult[i][1]));
+             message.insert("targetType", QString::fromStdString(friResult[i][2]));
+             message.insert("avatar", QString::fromStdString(friResult[i][3]));
+             message.insert("message", QString::fromStdString(friResult[i][4]));
+             message.insert("msgSender", QString::fromStdString(friResult[i][5]));
+             message.insert("msgTime", QString::fromStdString(friResult[i][6]));
+             messages.append(message);
+        }
+    }
+
+    sql = QString("SELECT * FROM ("
+                  "SELECT "
+                  "gml.group_account AS targetId, "
+                  "gi.name AS targetName, "
+                  "false AS targetType, "
+                  "gi.group_avatar_path AS avatar, "
+                  "gml.content AS message, "
+                  "ui.user_name AS msgSender, "
+                  "gml.time AS msgTime "
+                        "FROM group_message_library gml "
+                        "JOIN group_info gi ON gml.group_account = gi.group_account "
+                        "JOIN user_info ui ON gml.sender_account = ui.account "
+                        "JOIN group_members gm ON gml.group_account = gm.group_account AND gm.member_account = %1 "
+                        "ORDER BY msgTime DESC) GROUP BY targetId;").arg(clientId);
+    // 查询群聊信息
+    SelectResult selGroupResult = SelectResult();
+    selGroupResult.executeSelect( db, sql.toStdString());
+    auto groupResult = convert_select_result_to_vector(selGroupResult);
+    if(groupResult.size())
+    {
+        for ( int i = 0; i < selGroupResult.row; i++ ){
+             QJsonObject message;
+             message.insert("targetId", QString::fromStdString(groupResult[i][0]));
+             message.insert("targetName", QString::fromStdString(groupResult[i][1]));
+             message.insert("targetType", QString::fromStdString(groupResult[i][2]));
+             message.insert("avatar", QString::fromStdString(groupResult[i][3]));
+             message.insert("message", QString::fromStdString(groupResult[i][4]));
+             message.insert("msgSender", QString::fromStdString(groupResult[i][5]));
+             message.insert("msgTime", QString::fromStdString(groupResult[i][6]));
+             messages.append(message);
+        }
+    }
+
+    // 按消息时间递减排序
+    std::sort(messages.begin(), messages.end(), [](const QJsonValue & v1, const QJsonValue &v2){
+        return v1.toObject()["msgTime"].toString() > v2.toObject()["msgTime"].toString();
+    });
+
+    jsonObj.insert("request","setHistoryBack");
+    jsonObj.insert("messages", messages);
+
+    return jsonObj;
+}
+
+// 保存聊天记录到数据库
+QJsonObject FutServer::saveMessage(int clientId, int targetId, bool targetType, QString content, QString time)
+{
+    QJsonObject jsonObj;
+    // 插入
+    InsertResult insResult = InsertResult();
+    QString sql;
+    if(targetType == true) // 私聊信息  消息类型和状态目前默认为1
+    {
+        sql = QString("insert into friend_message_library(client_account, friend_account, time, type, content, status) "
+                      "values ('%1', '%2','%3', '%4','%5', '%6')").arg(QString::number(clientId), QString::number(targetId), time, "1", content, "1");
+    }
+    else // 群聊信息
+    {
+        sql = QString("insert into group_message_library(group_account, sender_account, time, type, content, status) "
+                      "values ('%1', '%2','%3', '%4','%5', '%6')").arg(QString::number(targetId), QString::number(clientId), time, "1", content, "1");
+    }
+    qDebug() << sql;
+    insResult.executeInsert( db, sql.toStdString());
+    bool insertResult = insResult.check_result();
+    if(insertResult){
+        if(targetType){ // 私聊 groupId为0
+            jsonObj.insert("request", "sendChatMessageBack");
+            jsonObj.insert("groupId", QJsonValue(0));
+            jsonObj.insert("sendId", QJsonValue(clientId));
+            jsonObj.insert("content",QJsonValue(content));
+            jsonObj.insert("time", QJsonValue(time));
+        }
+        else{ // 群聊
+            jsonObj.insert("request", "sendChatMessageBack");
+            jsonObj.insert("groupId", QJsonValue(targetId));
+            jsonObj.insert("sendId", QJsonValue(clientId));
+            jsonObj.insert("content",QJsonValue(content));
+            jsonObj.insert("time", QJsonValue(time));
+        }
+    }
+    else{
+        qDebug() << "保存聊天记录失败";
+    }
+    return jsonObj;
+}
+
+QList<int> FutServer::getGroupMemberList(int groupId)
+{
+    QList<int> groupMemberList;
+    SelectResult selResult = SelectResult();
+    QString sql = QString("select member_account from group_members where group_account = %1").arg(groupId);
+    selResult.executeSelect( db, sql.toStdString());
+    auto groupMemberListResult = convert_select_result_to_vector(selResult);
+
+    if(selResult.check_result() && groupMemberListResult.size())
+    {
+        for(int i = 0; i < selResult.row ; i++){
+            for(int j = 0 ; j < selResult.column ; j++){
+                QString id = QString::fromStdString(groupMemberListResult[i][j]);
+                int memberId = id.toInt();
+                groupMemberList.append(memberId);
+            }
+        }
+    }
+    else{
+        qDebug() << "未找到群成员";
+    }
+    return groupMemberList;
+}
+
