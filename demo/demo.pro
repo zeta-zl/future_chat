@@ -39,5 +39,4 @@ HEADERS += \
 DISTFILES += \
     GroupInfoPage.qml \
     GroupInvitePage.qml \
-    GroupMemberPage.qml \
-    PopPage.qml
+    GroupMemberPage.qml

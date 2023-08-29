@@ -111,24 +111,24 @@ FluWindow {
             }
         }
     }
-//    PopPage {
-//        id: subWindow
-//        visible: false
-//        x: root.x - subWindow.width -6
-//        y: root.y
-//        height: 200
-//        width: 300
-//        MouseArea{
-//            anchors.fill: parent
-//            hoverEnabled: true
-//            onEntered: {
-//                overTimer.stop();
-//            }
-//            onExited: {
-//                overTimer.start();
-//            }
-//        }
-//    }
+    PopPage {
+        id: subWindow
+        visible: false
+        x: root.x - subWindow.width -6
+        y: root.y
+        height: 200
+        width: 300
+        MouseArea{
+            anchors.fill: parent
+            hoverEnabled: true
+            onEntered: {
+                overTimer.stop();
+            }
+            onExited: {
+                overTimer.start();
+            }
+        }
+    }
     Timer{
         id: overTimer
         interval: 500

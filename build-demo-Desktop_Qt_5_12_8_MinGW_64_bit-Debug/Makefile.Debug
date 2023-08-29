@@ -63,8 +63,7 @@ OBJECTS       = debug/LoginPage.o \
 
 DIST          = GroupInfoPage.qml \
 		GroupInvitePage.qml \
-		GroupMemberPage.qml \
-		PopPage.qml ..\demo\futclient.h \
+		GroupMemberPage.qml ..\demo\futclient.h \
 		..\demo\userinfo.h ..\demo\LoginPage.cpp \
 		..\demo\futclient.cpp \
 		..\demo\userinfo.cpp
@@ -120,7 +119,8 @@ debug/qrc_qml.cpp: ../demo/qml.qrc \
 		../demo/ChatPage.qml \
 		../demo/LoginPage.qml \
 		../demo/GroupMemberPage.qml \
-		../demo/RegisterPage.qml
+		../demo/RegisterPage.qml \
+		../demo/PopPage.qml
 	D:\Qt5.12.8\5.12.8\mingw73_64\bin\rcc.exe -name qml ..\demo\qml.qrc -o debug\qrc_qml.cpp
 
 debug/qrc_res.cpp: ../demo/res.qrc \

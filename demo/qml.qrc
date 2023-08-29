@@ -9,6 +9,7 @@
         <file>GroupMemberPage.qml</file>
         <file>AddPage.qml</file>
         <file>GroupInvitePage.qml</file>
+        <file>PopPage.qml</file>
     </qresource>
     <qresource prefix="/images"/>
     <qresource prefix="/123"/>
