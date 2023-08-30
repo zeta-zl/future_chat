@@ -61,7 +61,7 @@ private:
     QJsonObject getHistoryMessage(int clientId, int targetId, bool targetType);
     QJsonObject getTargetMessageList(int clientId, bool targetType);
     QJsonObject searchUser(int targetId);
-    QJsonObject confirmAdd(int clientId, int targetId);
+    QJsonObject confirmAdd(int clientId, int targetId, QString addTime);
 
 };
 #endif // FUTSERVER_H
