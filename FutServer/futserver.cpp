@@ -170,10 +170,17 @@ void FutServer::handleReadyRead(QTcpSocket *newClientSocket)
             {
                 // 如果之前没有存储过这个 client_id 的连接，直接存储新的连接
                 clientMap.insert(client_id, newClientSocket);
-
-                qDebug()<<"Client ID:"<<client_id<<" 上线";
-                qDebug()<<"当前在线人数："<<clientMap.size();
-
+                if(client_id == -1){
+                    qDebug()<<"有未注册用户连接服务器";
+                }
+                else{
+                    qDebug()<<"Client ID:"<<client_id<<" 上线";
+                }
+                int userNum = clientMap.size();
+                if(clientMap.contains(-1)){
+                    userNum--;
+                }
+                qDebug()<<"当前在线人数："<< userNum;
             }
 
             qDebug() << "Client ID:" << client_id << " Request：" << request;
