@@ -58,7 +58,7 @@
 
 ////    sql = "select gml.group_account AS targetId, false AS targetType, gi.group_avatar_path AS avatar, gml.content AS message, ui.user_name AS msgSender, gml.time AS msgTime FROM group_message_library gml JOIN group_info gi ON gml.group_account = gi.group_account JOIN user_info ui ON gml.sender_account = ui.account JOIN group_members gm ON gml.group_account = gm.group_account AND gm.member_account = 1 ORDER BY msgTime DESC;";
 
-//    sql = "select * from (select gml.group_account AS targetId, gi.name AS targetName, false AS targetType, gi.group_avatar_path AS avatar, gml.content AS message, ui.user_name AS msgSender, gml.time AS msgTime FROM group_message_library gml JOIN group_info gi ON gml.group_account = gi.group_account JOIN user_info ui ON gml.sender_account = ui.account JOIN group_members gm ON gml.group_account = gm.group_account AND gm.member_account = 1 ORDER BY msgTime DESC) GROUP BY targetId;";
+////    sql = "select * from (select gml.group_account AS targetId, gi.name AS targetName, false AS targetType, gi.group_avatar_path AS avatar, gml.content AS message, ui.user_name AS msgSender, gml.time AS msgTime FROM group_message_library gml JOIN group_info gi ON gml.group_account = gi.group_account JOIN user_info ui ON gml.sender_account = ui.account JOIN group_members gm ON gml.group_account = gm.group_account AND gm.member_account = 1 ORDER BY msgTime DESC) GROUP BY targetId;";
 ////    sql = "SELECT * FROM ("
 ////            "SELECT "
 ////            "targetId,"
@@ -80,7 +80,7 @@
 ////                    "WHERE fml.client_account = 1 OR fml.friend_account = 1) t1 "
 ////                    "JOIN user_info uii ON t1.targetId = uii.account "
 ////                    "ORDER BY msgTime DESC) GROUP BY targetId;";
-
+//    sql = "select * from group_message_library where group_account = 1;";
 //    q_res.executeSelect( db, sql );
 //    q_res.check_result();
 //    //输出查询结果
@@ -89,7 +89,9 @@
 //    for ( int i = 0; i < q_res.row; i++ ) {
 //        for ( int j = 0; j < q_res.column; j++ ) {
 //            string temp = a[i][j];
-//            cout << temp << " ";
+//            if(temp!=""){
+//                cout << temp << " ";
+//            }
 //        }
 //        cout << endl;
 //    }

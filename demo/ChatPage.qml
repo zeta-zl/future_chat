@@ -24,6 +24,9 @@ FluWindow{
         }
     }
 
+    signal sendChatMessagefunc(QString clientId, QString targetId, QString targetType, QString content, QString time)
+
+
     FluRectangle{ // 顶部条
         id: topRtg
         width: parent.width
@@ -542,7 +545,8 @@ FluWindow{
                     "message": chatTextBox.text, "self": true}
 //                chatModel.append({"username": "大黄", "avatar": "images/test3.jpg",
 //                                 "message": chatTextBox.text, "self": true})
-                sendChatMessageSignal(curuser.id,t_id,isp,chatTextBox.text,QDateTime::currentDateTime().toTime_t();)
+
+                sendChatMessageSignal(curuser.id,model.contextid,model.isgroup,chatTextBox.text,QDateTime::currentDateTime().toTime_t());
                 chatTextBox.clear()
                 chatMsgList.positionViewAtEnd() // 保持底部
             }

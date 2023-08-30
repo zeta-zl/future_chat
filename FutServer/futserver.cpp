@@ -170,10 +170,17 @@ void FutServer::handleReadyRead(QTcpSocket *newClientSocket)
             {
                 // 如果之前没有存储过这个 client_id 的连接，直接存储新的连接
                 clientMap.insert(client_id, newClientSocket);
-
-                qDebug()<<"Client ID:"<<client_id<<" 上线";
-                qDebug()<<"当前在线人数："<<clientMap.size();
-
+                if(client_id == -1){
+                    qDebug()<<"有未注册用户连接服务器";
+                }
+                else{
+                    qDebug()<<"Client ID:"<<client_id<<" 上线";
+                }
+                int userNum = clientMap.size();
+                if(clientMap.contains(-1)){
+                    userNum--;
+                }
+                qDebug()<<"当前在线人数："<< userNum;
             }
 
             qDebug() << "Client ID:" << client_id << " Request：" << request;
@@ -203,6 +210,10 @@ void FutServer::parseRequest(QJsonObject jsonData)
     else if(request=="sendChatMessage")//发消息
     {
         sendChatMessageRespond(jsonData);
+    }
+    else if(request=="initChatWindow")
+    {
+        initChatWindow(jsonData);
     }
     else if(request=="search")//查找群/人
     {
@@ -334,7 +345,6 @@ void FutServer::setHistoryRespond(QJsonObject jsonData)
 // 发消息
 void FutServer::sendChatMessageRespond(QJsonObject jsonData)
 {
-    //目标ID
     int clientId = jsonData["clientId"].toInt();
     int targetId = jsonData["targetId"].toInt();
     bool targetType = jsonData["targetType"].toBool();
@@ -367,7 +377,24 @@ void FutServer::sendChatMessageRespond(QJsonObject jsonData)
                 respondToClient(jsonResult, targetSocket);
             }
         }
-    else{
-        qDebug()<< "操作失败";
+    }
+}
+
+void FutServer::initChatWindow(QJsonObject jsonData)
+{
+    int clientId = jsonData["clientId"].toInt();
+    int targetId = jsonData["targetId"].toInt();
+    bool targetType = jsonData["targetType"].toBool();
+
+
+    if (clientMap.contains(clientId))
+    {
+        QTcpSocket *targetSocket = getSocketById(clientId);
+        QJsonObject jsonResult = getHistoryMessage(clientId, targetId, targetType);
+        respondToClient(jsonResult, targetSocket);
+    }
+    else
+    {
+        qDebug()<< "用户离线";
     }
 }

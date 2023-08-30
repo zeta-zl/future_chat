@@ -26,6 +26,7 @@ QJsonObject FutServer::addAccount(QString userName, QString password)
     if(insertResult){
        qDebug() << "注册成功";
        id = result[0][0];
+       qDebug() << QString::fromStdString(id);
 
        // 注册成功，在数据库中添加自己为好友，(并添加初始聊天记录)
        QString SQLId = QString::fromStdString(id);
@@ -34,16 +35,19 @@ QJsonObject FutServer::addAccount(QString userName, QString password)
        QString addTime = currentTime.toString("yyyy-MM-dd HH:mm:ss");
        QString status = QString::fromStdString("1");
        InsertResult addSelfFriend = InsertResult();
-       sql = QString("insert into user_friends(client_account, friend_account, friend_nickname, add_time, status) values ('%1', '%2', '%3', '%4', '%5')").arg(SQLId, SQLId, nick_name, addTime, status);
+       sql = QString("insert into user_friends(client_account, friend_account, friend_nickname"
+                     ", add_time, status) values (%1, %2, '%3', '%4', %5)").arg(SQLId, SQLId, nick_name, addTime, status);
        addSelfFriend.executeInsert(db, sql.toStdString());
+       qDebug() << sql;
+       addSelfFriend.check_result();
     }
     else{
         qDebug() << "注册失败";
     }
 
     jsonObj.insert("request","registerBack"); //反馈类型
-    jsonObj.insert("id", QString::fromStdString(id)); // 分配的id,注册失败返回0
-    jsonObj.insert("result",insertResult);// 注册成功与否
+    jsonObj.insert("id", QJsonValue(QString::fromStdString(id).toInt())); // 分配的id,注册失败返回0
+    jsonObj.insert("result",QJsonValue(insertResult));// 注册成功与否
 
     return jsonObj;
 }
@@ -52,33 +56,41 @@ QJsonObject FutServer::addAccount(QString userName, QString password)
 QJsonObject FutServer::confirmLogin(int clientId, QString password)
 {
     QJsonObject jsonObj;
+    QJsonObject userInfo;
     QString sql;
-    sql = QString("select password, user_name from user_info where account = %1").arg(clientId);
+    sql = QString("select password, user_name, avatar_path, signature from user_info where account = %1").arg(clientId);
     // 查询对应的密码
     SelectResult selResult = SelectResult();
     selResult.executeSelect( db, sql.toStdString());
 
     auto result = convert_select_result_to_vector(selResult);
-//    qDebug() << result.size();
+
     if(result.size() == 0){
         qDebug() << "登录失败，账号不存在！";
-        jsonObj.insert("request","loginBack"); //登录反馈
-        jsonObj.insert("result", false);//
-        jsonObj.insert("userName", NULL);
+        jsonObj.insert("request",QJsonValue("loginBack")); //登录反馈
+        jsonObj.insert("result", QJsonValue(false));//
+        jsonObj.insert("userInfo", NULL);
         return jsonObj;
     }
 
     QString correctPassword= QString::fromStdString(result[0][0]);
     QString userName = QString::fromStdString(result[0][1]);
+    QString avatar = QString::fromStdString(result[0][2]);
+    QString signature = QString::fromStdString(result[0][3]);
     if(correctPassword == password){
         qDebug() << "登录成功";
     }
     else{
         qDebug() << "密码错误，登陆失败";
     }
+
+    userInfo["userName"] = userName;
+    userInfo["avatar"] = avatar;
+    userInfo["signature"] = signature;
+
     jsonObj.insert("request","loginBack"); //登录反馈
-    jsonObj.insert("result", correctPassword == password);// 密码是否一致
-    jsonObj.insert("userName", userName);
+    jsonObj.insert("result", QJsonValue(correctPassword == password));// 密码是否一致
+    jsonObj.insert("userInfo", QJsonValue(userInfo));
 
     return jsonObj;
 }
@@ -130,13 +142,14 @@ QJsonObject FutServer::loadMessageList(int clientId)
         qDebug() << "消息列表初始化失败" ;
     }
     auto friResult = convert_select_result_to_vector(selFriendResult);
+
     if(friResult.size())
     {
         for ( int i = 0; i < selFriendResult.row; i++ ){
              QJsonObject message;
              message.insert("targetId", QString::fromStdString(friResult[i][0]));
              message.insert("targetName", QString::fromStdString(friResult[i][1]));
-             message.insert("targetType", QString::fromStdString(friResult[i][2]));
+             message.insert("targetType", QJsonValue(true));
              message.insert("avatar", QString::fromStdString(friResult[i][3]));
              message.insert("message", QString::fromStdString(friResult[i][4]));
              message.insert("msgSender", QString::fromStdString(friResult[i][5]));
@@ -167,9 +180,9 @@ QJsonObject FutServer::loadMessageList(int clientId)
     {
         for ( int i = 0; i < selGroupResult.row; i++ ){
              QJsonObject message;
-             message.insert("targetId", QString::fromStdString(groupResult[i][0]));
+             message.insert("targetId", QString::fromStdString(groupResult[i][0]).toInt());
              message.insert("targetName", QString::fromStdString(groupResult[i][1]));
-             message.insert("targetType", QString::fromStdString(groupResult[i][2]));
+             message.insert("targetType", QJsonValue(false));
              message.insert("avatar", QString::fromStdString(groupResult[i][3]));
              message.insert("message", QString::fromStdString(groupResult[i][4]));
              message.insert("msgSender", QString::fromStdString(groupResult[i][5]));
@@ -199,12 +212,12 @@ QJsonObject FutServer::saveMessage(int clientId, int targetId, bool targetType, 
     if(targetType == true) // 私聊信息  消息类型和状态目前默认为1
     {
         sql = QString("insert into friend_message_library(client_account, friend_account, time, type, content, status) "
-                      "values ('%1', '%2','%3', '%4','%5', '%6')").arg(QString::number(clientId), QString::number(targetId), time, "1", content, "1");
+                      "values (%1, %2,'%3', %4,'%5', %6)").arg(QString::number(clientId), QString::number(targetId), time, "1", content, "1");
     }
     else // 群聊信息
     {
         sql = QString("insert into group_message_library(group_account, sender_account, time, type, content, status) "
-                      "values ('%1', '%2','%3', '%4','%5', '%6')").arg(QString::number(targetId), QString::number(clientId), time, "1", content, "1");
+                      "values (%1, %2,'%3', %4,'%5', %6)").arg(QString::number(targetId), QString::number(clientId), time, "1", content, "1");
     }
     qDebug() << sql;
     insResult.executeInsert( db, sql.toStdString());
@@ -255,3 +268,53 @@ QList<int> FutServer::getGroupMemberList(int groupId)
     return groupMemberList;
 }
 
+
+QJsonObject FutServer::getHistoryMessage(int clientId, int targetId, bool targetType)
+{
+    QJsonObject jsonObj;
+    QJsonArray messages;
+    QString sql;
+    SelectResult selResult = SelectResult();
+
+    if(targetType) // 私聊
+    {
+        sql = QString("SELECT client_account AS senderId, content, time, type, status, id "
+                      "FROM friend_message_library "
+                      "WHERE (client_account = %1 AND friend_account = %2) "
+                      "OR (client_account = %2 AND friend_account = %1) ORDER BY id DESC").arg(QString::number(clientId), QString::number(targetId));
+    }
+    else // 群聊
+    {
+        sql = QString("SELECT sender_account AS senderId, content, time, type, status, id "
+                      "FROM group_message_library "
+                      "WHERE group_account = %1 ORDER BY id DESC").arg(QString::number(targetId));
+    }
+
+    selResult.executeSelect(db, sql.toStdString());
+    auto msgResult = convert_select_result_to_vector(selResult);
+
+    if(selResult.check_result() && msgResult.size()) // 查询成功且有历史消息
+    {
+        for(int i = 0; i < selResult.row ; i++)
+        {
+            QJsonObject message;
+            message.insert("senderId", QString::fromStdString(msgResult[i][0]).toInt());
+            message.insert("content", QString::fromStdString(msgResult[i][1]));
+            message.insert("time", QString::fromStdString(msgResult[i][2]));
+            message.insert("type", QString::fromStdString(msgResult[i][3]).toInt());
+            message.insert("status", QString::fromStdString(msgResult[i][4]).toInt());
+            messages.append(message);
+        }
+    }
+    else
+    {
+        qDebug() << "查询历史消息失败或不存在历史消息";
+    }
+
+    jsonObj.insert("request", "initChatWindowBack");
+    jsonObj.insert("messages", messages);
+    jsonObj.insert("targetId", targetId);
+    jsonObj.insert("targetType", targetType);
+    jsonObj.insert("msgNumber",selResult.row);
+    return jsonObj;
+}
