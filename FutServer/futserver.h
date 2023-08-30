@@ -48,6 +48,8 @@ private:
     void initChatWindowRespond(QJsonObject jsonData);
     void createAddPageRespond(QJsonObject jsonData);
     void setFriendsRespond(QJsonObject jsonData);
+    void addStrangerRespond(QJsonObject jsonData);
+    void confirmAddStrangerRespond(QJsonObject jsonData);
 
     // 一些数据库操作
     QJsonObject addAccount(QString userName, QString password);
@@ -58,6 +60,8 @@ private:
     QList<int> getGroupMemberList(int groupId);
     QJsonObject getHistoryMessage(int clientId, int targetId, bool targetType);
     QJsonObject getTargetMessageList(int clientId, bool targetType);
+    QJsonObject searchUser(int targetId);
+    QJsonObject confirmAdd(int clientId, int targetId);
 
 };
 #endif // FUTSERVER_H

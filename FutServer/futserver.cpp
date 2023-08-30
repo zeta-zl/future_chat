@@ -220,6 +220,14 @@ void FutServer::parseRequest(QJsonObject jsonData)
     {
         setFriendsRespond(jsonData);
     }
+    else if(request=="addStranger")
+    {
+        addStrangerRespond(jsonData);
+    }
+    else if(request=="confirmAddStranger")
+    {
+        confirmAddStrangerRespond(jsonData);
+    }
     else if(request=="search")//查找群/人
     {
 //        searchRespond
@@ -435,6 +443,39 @@ void FutServer::setFriendsRespond(QJsonObject jsonData)
     else
     {
         qDebug() << "用户离线";
+    }
+}
+
+void FutServer::addStrangerRespond(QJsonObject jsonData)
+{
+    int clientId = jsonData["clientId"].toInt();
+    int targetId = jsonData["targetId"].toInt();
+    if (clientMap.contains(clientId))
+    {
+        QTcpSocket *targetSocket = getSocketById(clientId);
+        QJsonObject jsonResult = searchUser(targetId);
+        respondToClient(jsonResult, targetSocket);
+    }
+    else
+    {
+        qDebug()<< "用户离线";
+    }
+}
+
+void FutServer::confirmAddStrangerRespond(QJsonObject jsonData)
+{
+    int clientId = jsonData["clientId"].toInt();
+    int targetId = jsonData["targetId"].toInt();
+    QString addTime = jsonData["addTime"].toString();
+    if (clientMap.contains(clientId))
+    {
+        QTcpSocket *targetSocket = getSocketById(clientId);
+        QJsonObject jsonResult = confirmAdd(clientId, targetId, addTime);
+        respondToClient(jsonResult, targetSocket);
+    }
+    else
+    {
+        qDebug()<< "用户离线";
     }
 }
 

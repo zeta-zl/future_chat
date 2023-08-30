@@ -391,3 +391,51 @@ QJsonObject FutServer::getTargetMessageList(int clientId, bool targetType)
     }
     return jsonObj;
 }
+
+QJsonObject FutServer::searchUser(int targetId)
+{
+    QJsonObject jsonObj;
+    QString sql;
+    SelectResult selResult = SelectResult();
+
+    sql = QString("select avatar_path, user_name from user_info where account = %1").arg(targetId);
+    selResult.executeSelect(db, sql.toStdString());
+
+    auto result = convert_select_result_to_vector(selResult);
+
+    if(selResult.check_result() && result.size())
+    {
+        jsonObj["avatar"] = QString::fromStdString(result[0][0]);
+        jsonObj["targetName"] = QString::fromStdString(result[0][1]);
+        jsonObj["result"] = true;
+    }
+    else{
+        qDebug() << "该ID不存在";
+        jsonObj["avatar"] = "";
+        jsonObj["targetName"] = "";
+        jsonObj["result"] = false;
+    }
+    return jsonObj;
+}
+
+QJsonObject FutServer::confirmAdd(int clientId, int targetId, QString addTime)
+{
+    QJsonObject jsonObj;
+    QString sql;
+    SelectResult selResult = SelectResult();
+    sql = QString("insert into user_info (client_account, friend_account, add_time values(%1,%2,'%3')").arg(QString::number(clientId), QString::number(targetId), addTime);
+
+    selResult.executeSelect(db, sql.toStdString());
+
+    auto result = convert_select_result_to_vector(selResult);
+
+    if(selResult.check_result() && result.size())
+    {
+        jsonObj["result"] = true;
+    }
+    else{
+        qDebug() << "添加好友失败";
+        jsonObj["result"] = false;
+    }
+    return jsonObj;
+}
