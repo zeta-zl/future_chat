@@ -24,6 +24,7 @@ private:
     quint16 listenPort; // 监听端口号
     QTcpServer* myServer; // 服务器对象
     QMap<int, QTcpSocket*> clientMap; // 存储在线用户Map Id-Socket
+    QMap<int, QJsonObject*> clientMessages;
     DataBase db;
     // 处理新客户端socket通信连接
     void handleNewConnection();
@@ -45,14 +46,18 @@ private:
     void setHistoryRespond(QJsonObject jsonData);
     void sendChatMessageRespond(QJsonObject jsonData);
     void initChatWindowRespond(QJsonObject jsonData);
+    void createAddPageRespond(QJsonObject jsonData);
+    void setFriendsRespond(QJsonObject jsonData);
 
     // 一些数据库操作
     QJsonObject addAccount(QString userName, QString password);
     QJsonObject confirmLogin(int clientId, QString password);
     QJsonObject loadMessageList(int clientId);
+    void setFriendsGroupsList(int clientId, QJsonArray messages);
     QJsonObject saveMessage(int clientId, int targetId, bool targetType, QString content, QString time);
     QList<int> getGroupMemberList(int groupId);
     QJsonObject getHistoryMessage(int clientId, int targetId, bool targetType);
+    QJsonObject getTargetMessageList(int clientId, bool targetType);
 
 };
 #endif // FUTSERVER_H

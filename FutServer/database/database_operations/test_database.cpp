@@ -5,7 +5,7 @@
 
 //using namespace std;
 
-//string path = "future_chat1.db";
+//string path = "future_chat2.db";
 
 
 //int main( int argc, char* argv[] ) {
@@ -20,18 +20,39 @@
 ////    i_res.check_result();
 
 
+
+////    InsertResult i_res = InsertResult();
+////    //批量插入
+////    auto sql_ls = vector<string>{
+////        "INSERT INTO user_info (password, user_name, signature, gender, birthday, location, education_experience) VALUES ('user123', 'lch', 'hi!', 'Male', '2003-1-18', 'Beijing', 'BIT');",
+////        "INSERT INTO user_info (password, user_name, signature, gender, birthday, location, education_experience) VALUES ('user123', 'ljy', 'hi!', 'Male', '2002-10-18', 'Beijing', 'BIT');",
+////        "INSERT INTO user_friends (client_account, friend_account, friend_nickname, add_time, status) VALUES (1, 2, 'Barb', '2023-08-28 12:00:00', 1);",
+////        "INSERT INTO user_friends (client_account, friend_account, friend_nickname, add_time, status) VALUES (2, 1, 'joy', '2023-08-28 12:00:00', 1);",
+////        "INSERT INTO friend_message_library (client_account, friend_account, time, type, content, status) VALUES (1, 2, '2023-08-28 14:30:00', 1, 'Hello!', 0);",
+////        "INSERT INTO friend_message_library (client_account, friend_account, time, type, content, status) VALUES (2, 1, '2023-08-28 14:31:00', 1, 'where are u from?', 0);",
+////        "INSERT INTO group_info (group_owner_account, name) VALUES (1, 'Born in future');",
+////        "INSERT INTO group_members (group_account, member_account, position, join_time) VALUES (1, 1, 'Master', '2023-08-28 09:00:00');",
+////        "INSERT INTO group_members (group_account, member_account, position, join_time) VALUES (1, 2, 'Member', '2023-08-28 09:00:00');",
+////        "INSERT INTO group_message_library (group_account, sender_account, time, type, content, status) VALUES (1, 1, '2023-08-28 14:31:00', 1, 'hello everyone!', 0);",
+////        "INSERT INTO group_message_library (group_account, sender_account, time, type, content, status) VALUES (1, 2, '2023-08-28 14:32:00', 1, 'hello joy!', 0);"
+////        };
+////    i_res.batch_executeInsert( db, sql_ls );
+////    i_res.check_result();
+
 ////    InsertResult i_res = InsertResult();
 //////    //批量插入
 ////    auto sql_ls = vector<string>{
-////        "INSERT INTO user_friends (client_account, friend_account, friend_nickname, add_time, status) VALUES (1, 3, 'sunny', '2023-08-28 12:00:00', 1);",
-////        "INSERT INTO user_friends (client_account, friend_account, friend_nickname, add_time, status) VALUES (3, 1, 'joy', '2023-08-28 12:00:00', 1);",
-////        "INSERT INTO friend_message_library (client_account, friend_account, time, type, content, status) VALUES (1, 3, '2023-08-28 14:33:00', 1, 'Hi!', 0);",
-////        "INSERT INTO friend_message_library (client_account, friend_account, time, type, content, status) VALUES (3, 1, '2023-08-28 14:31:00', 1, 'miss u', 0);",
+////        "insert into user_info (user_name, password) values ('joey', 'joy');",
+////        "insert into user_info (user_name, password) values ('amy', 'amy');",
+////        "INSERT INTO user_friends (client_account, friend_account, friend_nickname, add_time, status) VALUES (1, 2, 'sunny', '2023-08-28 12:00:00', 1);",
+////        "INSERT INTO user_friends (client_account, friend_account, friend_nickname, add_time, status) VALUES (2, 1, 'joy', '2023-08-28 12:00:00', 1);",
+////        "INSERT INTO friend_message_library (client_account, friend_account, time, type, content, status) VALUES (1, 2, '2023-08-28 14:33:00', 1, 'Hi!', 0);",
+////        "INSERT INTO friend_message_library (client_account, friend_account, time, type, content, status) VALUES (2, 1, '2023-08-28 14:31:00', 1, 'miss u', 0);",
 ////        "INSERT INTO group_info (group_owner_account, name) VALUES (1, 'futureChat');",
-////        "INSERT INTO group_members (group_account, member_account, position, join_time) VALUES (2, 1, 'Master', '2023-08-28 09:00:00');",
-////        "INSERT INTO group_members (group_account, member_account, position, join_time) VALUES (2, 3, 'Member', '2023-08-28 09:00:00');",
-////        "INSERT INTO group_message_library (group_account, sender_account, time, type, content, status) VALUES (2, 1, '2023-08-28 14:32:10', 1, 'hello sunny!', 0);",
-////        "INSERT INTO group_message_library (group_account, sender_account, time, type, content, status) VALUES (2, 3, '2023-08-28 14:32:00', 1, 'hello joy!', 0);"
+////        "INSERT INTO group_members (group_account, member_account, position, join_time) VALUES (1, 1, 'Master', '2023-08-28 09:00:00');",
+////        "INSERT INTO group_members (group_account, member_account, position, join_time) VALUES (1, 2, 'Member', '2023-08-28 09:00:00');",
+////        "INSERT INTO group_message_library (group_account, sender_account, time, type, content, status) VALUES (1, 1, '2023-08-28 14:32:10', 1, 'hello sunny!', 0);",
+////        "INSERT INTO group_message_library (group_account, sender_account, time, type, content, status) VALUES (1, 2, '2023-08-28 14:32:00', 1, 'hello joy!', 0);"
 ////        };
 ////    i_res.batch_executeInsert( db, sql_ls );
 ////    i_res.check_result();
@@ -54,7 +75,7 @@
 ////    u_res.check_result();
 
 //    //使用字符串转换查询
-//    SelectResult q_res = SelectResult();
+
 
 ////    sql = "select gml.group_account AS targetId, false AS targetType, gi.group_avatar_path AS avatar, gml.content AS message, ui.user_name AS msgSender, gml.time AS msgTime FROM group_message_library gml JOIN group_info gi ON gml.group_account = gi.group_account JOIN user_info ui ON gml.sender_account = ui.account JOIN group_members gm ON gml.group_account = gm.group_account AND gm.member_account = 1 ORDER BY msgTime DESC;";
 
@@ -80,7 +101,8 @@
 ////                    "WHERE fml.client_account = 1 OR fml.friend_account = 1) t1 "
 ////                    "JOIN user_info uii ON t1.targetId = uii.account "
 ////                    "ORDER BY msgTime DESC) GROUP BY targetId;";
-//    sql = "select * from group_message_library where group_account = 1;";
+//    SelectResult q_res = SelectResult();
+//    sql = "select * from group_members;";
 //    q_res.executeSelect( db, sql );
 //    q_res.check_result();
 //    //输出查询结果
@@ -89,11 +111,8 @@
 //    for ( int i = 0; i < q_res.row; i++ ) {
 //        for ( int j = 0; j < q_res.column; j++ ) {
 //            string temp = a[i][j];
-//            if(temp!=""){
-//                cout << temp << " ";
-//            }
+//            cout << temp << " ";
 //        }
 //        cout << endl;
 //    }
-
 //}

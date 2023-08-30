@@ -125,9 +125,10 @@ void FutServer::clientDisconnect()
     qDebug()<<"client: "<<dyingId <<" disconnect!";
 
     dyingTcpSocket->deleteLater();
+
     // 更新在线用户
     clientMap.remove(dyingId);
-
+//    clientMessages.remove(dyingId);
     qDebug() << "当前在线人数： "<<clientMap.size();
 
 }
@@ -210,6 +211,14 @@ void FutServer::parseRequest(QJsonObject jsonData)
     else if(request=="initChatWindow")
     {
         initChatWindowRespond(jsonData);
+    }
+    else if(request=="createAddPage")
+    {
+        createAddPageRespond(jsonData);
+    }
+    else if(request=="setFriends")
+    {
+        setFriendsRespond(jsonData);
     }
     else if(request=="search")//查找群/人
     {
@@ -394,3 +403,40 @@ void FutServer::initChatWindowRespond(QJsonObject jsonData)
         qDebug()<< "用户离线";
     }
 }
+
+void FutServer::createAddPageRespond(QJsonObject jsonData)
+{
+    int clientId = jsonData["clientId"].toInt();
+    if (clientMap.contains(clientId))
+    {
+        QTcpSocket *targetSocket = getSocketById(clientId);
+        QJsonObject jsonResult;
+        jsonResult["request"] = "createAddPageBack";
+        jsonResult["clientId"] = clientId;
+        respondToClient(jsonResult, targetSocket);
+    }
+    else
+    {
+        qDebug()<< "用户离线";
+    }
+}
+
+void FutServer::setFriendsRespond(QJsonObject jsonData)
+{
+    int clientId = jsonData["clientId"].toInt();
+    bool targetType = jsonData["targetType"].toBool();
+
+    if(clientMap.contains(clientId) && clientMessages.contains(clientId))
+    {
+        QTcpSocket *targetSocket = getSocketById(clientId);
+        QJsonObject jsonResult = getTargetMessageList(clientId, targetType);
+        respondToClient(jsonResult, targetSocket);
+    }
+    else
+    {
+        qDebug() << "用户离线";
+    }
+}
+
+
+

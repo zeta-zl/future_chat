@@ -135,11 +135,11 @@ QJsonObject FutServer::loadMessageList(int clientId)
     selFriendResult.executeSelect( db, sql.toStdString());
     if(selFriendResult.check_result())
     {
-        qDebug() << "消息列表初始化成功" ;
+        qDebug() << "私聊列表初始化成功" ;
     }
     else
     {
-        qDebug() << "消息列表初始化失败" ;
+        qDebug() << "私聊列表初始化失败" ;
     }
     auto friResult = convert_select_result_to_vector(selFriendResult);
 
@@ -175,6 +175,14 @@ QJsonObject FutServer::loadMessageList(int clientId)
     // 查询群聊信息
     SelectResult selGroupResult = SelectResult();
     selGroupResult.executeSelect( db, sql.toStdString());
+    if(selGroupResult.check_result())
+    {
+        qDebug() << "群聊列表初始化成功" ;
+    }
+    else
+    {
+        qDebug() << "群聊列表初始化失败" ;
+    }
     auto groupResult = convert_select_result_to_vector(selGroupResult);
     if(groupResult.size())
     {
@@ -199,8 +207,36 @@ QJsonObject FutServer::loadMessageList(int clientId)
     jsonObj.insert("request","setHistoryBack");
     jsonObj.insert("messages", messages);
 
+    setFriendsGroupsList(clientId, messages);
+
     return jsonObj;
 }
+
+void FutServer::setFriendsGroupsList(int clientId, QJsonArray messages)
+{
+    QJsonArray friendList;
+    QJsonArray groupList;
+
+    for(int i = 0; i < messages.size() ;i++)
+    {
+        if(messages.at(i)["targetType"] == true) // 好友
+        {
+            friendList.append(messages.at(i));
+        }
+        else // 群聊
+        {
+            groupList.append(messages.at(i));
+        }
+    }
+
+    QJsonObject* userMessages = new QJsonObject;
+    userMessages->insert("messages", messages);
+    userMessages->insert("friendList", friendList);
+    userMessages->insert("groupList", groupList);
+    clientMessages.insert(clientId, userMessages);
+    qDebug() << "已初始化界面用户数量： " << clientMessages.size() << " 好友数量："<< friendList.size() <<  " 群聊数量：" << groupList.size();
+}
+
 
 // 保存聊天记录到数据库
 QJsonObject FutServer::saveMessage(int clientId, int targetId, bool targetType, QString content, QString time)
@@ -208,6 +244,7 @@ QJsonObject FutServer::saveMessage(int clientId, int targetId, bool targetType, 
     QJsonObject jsonObj;
     // 插入
     InsertResult insResult = InsertResult();
+    SelectResult selResult = SelectResult();
     QString sql;
     if(targetType == true) // 私聊信息  消息类型和状态目前默认为1
     {
@@ -219,21 +256,39 @@ QJsonObject FutServer::saveMessage(int clientId, int targetId, bool targetType, 
         sql = QString("insert into group_message_library(group_account, sender_account, time, type, content, status) "
                       "values (%1, %2,'%3', %4,'%5', %6)").arg(QString::number(targetId), QString::number(clientId), time, "1", content, "1");
     }
+
     qDebug() << sql;
     insResult.executeInsert( db, sql.toStdString());
     bool insertResult = insResult.check_result();
+
+    sql = QString("SELECT user_name, avatar_path FROM user_info WHERE account = %1").arg(clientId);
+    selResult.executeSelect( db, sql.toStdString());
+    auto searchResult = convert_select_result_to_vector(selResult);
+    QString senderName;
+    QString senderAvatar;
+    if(searchResult.size())
+    {
+        senderName = QString::fromStdString(searchResult[0][0]);
+        senderAvatar = QString::fromStdString(searchResult[0][1]);
+    }
+
+
     if(insertResult){
         if(targetType){ // 私聊 groupId为0
             jsonObj.insert("request", "sendChatMessageBack");
             jsonObj.insert("groupId", QJsonValue(0));
-            jsonObj.insert("sendId", QJsonValue(clientId));
+            jsonObj.insert("senderId", QJsonValue(clientId));
+            jsonObj.insert("senderName", QJsonValue(senderName));
+            jsonObj.insert("senderAvatar", QJsonValue(senderAvatar));
             jsonObj.insert("content",QJsonValue(content));
             jsonObj.insert("time", QJsonValue(time));
         }
         else{ // 群聊
             jsonObj.insert("request", "sendChatMessageBack");
             jsonObj.insert("groupId", QJsonValue(targetId));
-            jsonObj.insert("sendId", QJsonValue(clientId));
+            jsonObj.insert("senderId", QJsonValue(clientId));
+            jsonObj.insert("senderName", QJsonValue(senderName));
+            jsonObj.insert("senderAvatar", QJsonValue(senderAvatar));
             jsonObj.insert("content",QJsonValue(content));
             jsonObj.insert("time", QJsonValue(time));
         }
@@ -317,5 +372,22 @@ QJsonObject FutServer::getHistoryMessage(int clientId, int targetId, bool target
     jsonObj.insert("targetId", targetId);
     jsonObj.insert("targetType", targetType);
     jsonObj.insert("msgNumber",selResult.row);
+    return jsonObj;
+}
+
+QJsonObject FutServer::getTargetMessageList(int clientId, bool targetType)
+{
+    QJsonObject jsonObj;
+    jsonObj["request"] = "setFriendsBack";
+    jsonObj["targetType"] = targetType;
+    QJsonArray messages;
+    QJsonObject userMsg = *clientMessages.value(clientId);
+    if(targetType == true)
+    {
+        jsonObj["messages"] = userMsg["friendList"];
+    }
+    else{
+        jsonObj["messages"] = userMsg["groupList"];
+    }
     return jsonObj;
 }
