@@ -44,7 +44,7 @@ private:
     void loginRespond(QJsonObject jsonData);
     void setHistoryRespond(QJsonObject jsonData);
     void sendChatMessageRespond(QJsonObject jsonData);
-    void initChatWindow(QJsonObject jsonData);
+    void initChatWindowRespond(QJsonObject jsonData);
 
     // 一些数据库操作
     QJsonObject addAccount(QString userName, QString password);

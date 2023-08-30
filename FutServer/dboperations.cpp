@@ -256,8 +256,7 @@ QList<int> FutServer::getGroupMemberList(int groupId)
     {
         for(int i = 0; i < selResult.row ; i++){
             for(int j = 0 ; j < selResult.column ; j++){
-                QString id = QString::fromStdString(groupMemberListResult[i][j]);
-                int memberId = id.toInt();
+                int memberId = QString::fromStdString(groupMemberListResult[i][j]).toInt();
                 groupMemberList.append(memberId);
             }
         }
@@ -278,15 +277,15 @@ QJsonObject FutServer::getHistoryMessage(int clientId, int targetId, bool target
 
     if(targetType) // 私聊
     {
-        sql = QString("SELECT client_account AS senderId, content, time, type, status, id "
-                      "FROM friend_message_library "
+        sql = QString("SELECT client_account AS senderId, user_name As senderName, avatar_path AS senderAvatar, content, time, type, status, id "
+                      "FROM friend_message_library JOIN user_info ON friend_message_library.client_account = user_info.account "
                       "WHERE (client_account = %1 AND friend_account = %2) "
                       "OR (client_account = %2 AND friend_account = %1) ORDER BY id DESC").arg(QString::number(clientId), QString::number(targetId));
     }
     else // 群聊
     {
-        sql = QString("SELECT sender_account AS senderId, content, time, type, status, id "
-                      "FROM group_message_library "
+        sql = QString("SELECT sender_account AS senderId, user_name As senderName, avatar_path AS senderAvatar, content, time, type, status, id "
+                      "FROM group_message_library JOIN user_info ON group_message_library.sender_account = user_info.account "
                       "WHERE group_account = %1 ORDER BY id DESC").arg(QString::number(targetId));
     }
 
@@ -299,10 +298,12 @@ QJsonObject FutServer::getHistoryMessage(int clientId, int targetId, bool target
         {
             QJsonObject message;
             message.insert("senderId", QString::fromStdString(msgResult[i][0]).toInt());
-            message.insert("content", QString::fromStdString(msgResult[i][1]));
-            message.insert("time", QString::fromStdString(msgResult[i][2]));
-            message.insert("type", QString::fromStdString(msgResult[i][3]).toInt());
-            message.insert("status", QString::fromStdString(msgResult[i][4]).toInt());
+            message.insert("senderName", QString::fromStdString(msgResult[i][1]));
+            message.insert("senderAvatar", QString::fromStdString(msgResult[i][2]));
+            message.insert("content", QString::fromStdString(msgResult[i][3]));
+            message.insert("time", QString::fromStdString(msgResult[i][4]));
+            message.insert("type", QString::fromStdString(msgResult[i][5]).toInt());
+            message.insert("status", QString::fromStdString(msgResult[i][6]).toInt());
             messages.append(message);
         }
     }

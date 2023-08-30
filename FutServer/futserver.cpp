@@ -10,36 +10,36 @@ id INTEGER PRIMARY KEY AUTOINCREMENT,\
 client_account INTEGER NOT NULL,\
 friend_account INTEGER NOT NULL,\
 time TIMESTAMP NOT NULL,\
-type INTEGER,\
-content TEXT,\
-status INTEGER\
+type INTEGER DEFAULT 1,\
+content TEXT NOT NULL,\
+status INTEGER DEFAULT 1\
 );\
 CREATE TABLE IF NOT EXISTS group_message_library ( \
 id INTEGER PRIMARY KEY AUTOINCREMENT,\
 group_account INTEGER NOT NULL,\
 sender_account INTEGER NOT NULL,\
 time TIMESTAMP NOT NULL,\
-type INTEGER,\
-content TEXT,\
-status INTEGER\
+type INTEGER DEFAULT 1,\
+content TEXT NOT NULL,\
+status INTEGER DEFAULT 1\
 );\
 CREATE TABLE IF NOT EXISTS user_info (\
 account INTEGER PRIMARY KEY AUTOINCREMENT,\
 password TEXT NOT NULL,\
 user_name VARCHAR( 255 ) NOT NULL,\
 avatar_path TEXT DEFAULT 'https://c-ssl.duitang.com/uploads/blog/201408/15/20140815095903_ttcnF.jpeg',\
-signature TEXT,\
-gender VARCHAR( 20 ),\
-birthday DATE,\
-location TEXT,\
-education_experience TEXT\
+signature TEXT DEFAULT '这个用户很懒，没有留下任何签名',\
+gender VARCHAR( 20 ) DEFAULT '男',\
+birthday DATE DEFAULT '2000-1-1',\
+location TEXT DEFAULT '中国',\
+education_experience TEXT DEFAULT '无'\
 );\
 CREATE TABLE IF NOT EXISTS user_friends (\
 client_account INTEGER,\
 friend_account INTEGER,\
 friend_nickname VARCHAR( 255 ),\
 add_time TIMESTAMP,\
-status INTEGER,\
+status INTEGER DEFAULT 1,\
 PRIMARY KEY( client_account, friend_account )\
 );\
 CREATE TABLE IF NOT EXISTS group_info (\
@@ -51,17 +51,13 @@ group_avatar_path TEXT DEFAULT 'https://c-ssl.duitang.com/uploads/blog/201408/15
 CREATE TABLE IF NOT EXISTS group_members (\
 group_account INTEGER NOT NULL,\
 member_account INTEGER NOT NULL,\
-position TEXT,\
+position TEXT DEFAULT 'member',\
 join_time TIMESTAMP,\
 PRIMARY KEY( group_account, member_account )\
 );\
-CREATE TABLE IF NOT EXISTS ip_library (\
-account INTEGER PRIMARY KEY,\
-ip VARCHAR( 255 )\
-);\
 ";
 
-string db_path = "future_chat1.db";
+string db_path = "future_chat2.db";
 
 static int init_database( DataBase& db ) {
     char* error_mes = nullptr;
@@ -170,14 +166,14 @@ void FutServer::handleReadyRead(QTcpSocket *newClientSocket)
             {
                 // 如果之前没有存储过这个 client_id 的连接，直接存储新的连接
                 clientMap.insert(client_id, newClientSocket);
-                if(client_id == -1){
+                if(client_id == -1 or client_id == 0){
                     qDebug()<<"有未注册用户连接服务器";
                 }
                 else{
                     qDebug()<<"Client ID:"<<client_id<<" 上线";
                 }
                 int userNum = clientMap.size();
-                if(clientMap.contains(-1)){
+                if(clientMap.contains(-1) or clientMap.contains(0)){
                     userNum--;
                 }
                 qDebug()<<"当前在线人数："<< userNum;
@@ -213,7 +209,7 @@ void FutServer::parseRequest(QJsonObject jsonData)
     }
     else if(request=="initChatWindow")
     {
-        initChatWindow(jsonData);
+        initChatWindowRespond(jsonData);
     }
     else if(request=="search")//查找群/人
     {
@@ -380,7 +376,7 @@ void FutServer::sendChatMessageRespond(QJsonObject jsonData)
     }
 }
 
-void FutServer::initChatWindow(QJsonObject jsonData)
+void FutServer::initChatWindowRespond(QJsonObject jsonData)
 {
     int clientId = jsonData["clientId"].toInt();
     int targetId = jsonData["targetId"].toInt();
