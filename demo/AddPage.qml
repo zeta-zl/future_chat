@@ -18,6 +18,10 @@ FluWindow {
     property string strangerId: ""
     signal searchStanger(string strangerId,string curid)
 
+    function createAddPage(){
+        console.log("createAddPage has been created")
+    }
+
     Item{
         id:r
         width: 300

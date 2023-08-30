@@ -15,56 +15,46 @@ FluWindow {
     title: qsTr("FutureTalk")
     objectName: "MainPage_object"
 
-    function setHistoryBack(chatName,avatar,message,msgSender,timestamp) {
+    signal createAddPage()
+    signal createChatPage(string clientid, string targetid,string targetType)
+
+    function setHistoryBack(chatName,avatar,message,msgSender,timestamp,targetType,targetId) {
             console.log(chatName,avatar,message,msgSender,timestamp)
-            friendModel.append({"username": chatName, "avatar": "images/test.png", "message": msgSender+":"+message,
-                                "newmsg": "3", "newmsgtime": timestamp, "isdonotdisturb": false})
+            chatMsgModel.append({"username": chatName, "avatar": "images/test.png", "message": msgSender+":"+message,
+                                "newmsg": "3", "newmsgtime": timestamp, "isdonotdisturb": false,"targetId":targetId,"targetType":targetType})
         }
 
-//        function setHistoryBack(chatName,avatar,message,msgSender,timestamp) {
-//           var e{
-//                username: chatName; avatar: "images/test.png"; message: msgSender+":"+message;
-//                newmsg: "3"; newmsgtime: timestamp; isdonotdisturb: false;
-//            };
-//            friendModel.append(e);
-//        }
-
-//    ListModel {
-//            id: friendModel
-
-//    function setHistoryBack(chatName,avatar,message,msgSender,timestamp) {
-//        console.log(chatName,avatar,message,msgSender,timestamp)
-//        friendModel.append({"username": chatName, "avatar": "images/test.png", "message": msgSender+":"+message,
-//                            "newmsg": "3", "newmsgtime": timestamp, "isdonotdisturb": false
-//                           })
-//    }
-
     ListModel {
-            id: friendModel
+            id: chatMsgModel
             // 用户名； 头像； 新消息内容； 新消息数量； 是否开启免打扰; 是否是群聊
             ListElement {
                 username: "Alice"; avatar: "images/test2.jpg"; message: "Hello!";
                 newmsg: "3"; newmsgtime: "三天前"; isdonotdisturb: false;
-                isgroup: false
+                isgroup: false; groupmember: "0";targetId:"1";targetType:"true";
             }
 //            ListElement {
-//                username: "Bob"; avatar: "images/test2.jpg"; message: "Hey there!";
-//                newmsg: "100"; newmsgtime: "2021/8/24"; isdonotdisturb: false
+//                username: "生于未来"; avatar: "images/test2.jpg"; message: "Hello!";
+//                newmsg: "100"; newmsgtime: "刚刚"; isdonotdisturb: false;
+//                isgroup: true; groupmember: "6"
 //            }
     }
 
     ListModel {
-            id: groupModel
-            // 用户名； 头像； 新消息内容； 新消息数量； 是否开启免打扰; 是否是群聊; 群聊人数
+            id: friendModel
+            // 用户名； 头像； 是否开启免打扰; 是否是群聊
             ListElement {
-                username: "sywl"; avatar: "images/test2.jpg"; message: "Hello!";
-                newmsg: "3"; newmsgtime: "三天前"; isdonotdisturb: false;
+                username: "Alice"; avatar: "images/test2.jpg"; isdonotdisturb: false;
+                isgroup: false
+            }
+    }
+
+    ListModel {
+            id: groupModel
+            // 用户名； 头像； 是否开启免打扰; 是否是群聊; 群聊人数
+            ListElement {
+                username: "sywl"; avatar: "images/test2.jpg"; isdonotdisturb: false;
                 isgroup: true; groupmember: "10"
             }
-//            ListElement {
-//                username: "Bob"; avatar: "images/test2.jpg"; message: "Hey there!";
-//                newmsg: "100"; newmsgtime: "2021/8/24"; isdonotdisturb: false
-//            }
     }
 
 
@@ -140,6 +130,7 @@ FluWindow {
             width: 30
             height: 30
             onClicked: {
+                createAddPage();
                 var component = Qt.createComponent("AddPage.qml");
                 var win = component.createObject(root);
                 win.show();
@@ -224,7 +215,7 @@ FluWindow {
                 width: parent.width
                 height: parent.height
                 clip: true
-                model: friendModel
+                model: chatMsgModel
                 ScrollBar.vertical: ScrollBar {
                     policy: ScrollBar.AsNeeded
                 }
@@ -244,6 +235,12 @@ FluWindow {
                         MouseArea{
                             enabled: true
                             onClicked: {
+                                console.log(targetType,targetId)
+                                if (targetType=="true"){
+                                    createChatPage(curuser.id,targetId,true)
+                                }else if(targetType=="false"){
+                                    createChatPage(curuser.id,targetId,false)
+                                }
                                 var component = Qt.createComponent("ChatPage.qml");
                                 var win = component.createObject(root);
                                 win.show();
@@ -355,9 +352,11 @@ FluWindow {
                             onEntered: item_.isHover = true
                             onExited: item_.isHover = false
                             onDoubleClicked: {
+                                //console.log(targetid)
                                 var component = Qt.createComponent("ChatPage.qml");
                                 var win = component.createObject(root);
                                 win.show();
+                                createChatPage(curuser.id,targetId,true)
                             }
                         }
                         states: [
@@ -457,6 +456,7 @@ FluWindow {
                             onEntered: item2_.isHover = true
                             onExited: item2_.isHover = false
                             onDoubleClicked: {
+                                createChatPage(curuser.id,targetId,false)
                                 var component = Qt.createComponent("ChatPage.qml");
                                 var win = component.createObject(root);
                                 win.show();

@@ -5,6 +5,7 @@
 #include<QString>
 #include<QQuickItem>
 #include<QJsonArray>
+#include <QThread>
 
 FutClient::FutClient(QQmlApplicationEngine *engine, QObject *parent)
 {
@@ -62,6 +63,8 @@ void FutClient::parsecommand(QJsonDocument jsonDoc){
         setHistoryBack(jsonData);
     } else if(request=="sendChatMessageBack"){
         sendChatMessageBack(jsonData);
+    } else if(request=="initChatWindowBack"){
+        createChatPageBack(jsonData);
     }
 }
 //登录
@@ -118,12 +121,16 @@ void FutClient::setHistoryfunc(int userid){
 void FutClient::setHistoryBack(QJsonObject jsondata){
     QJsonArray jsonArray=jsondata["messages"].toArray();
     for(int i=0;i<jsonArray.size();i++){
+        QString targetTypeString;
         QJsonObject obj = jsonArray[i].toObject();
         QString targetid=obj["targetId"].toString();
-        qDebug()<<"targetid"<<targetid;
         bool targetType=obj["targetType"].toBool();
+        if(targetType){
+            targetTypeString = "true";
+        }else{
+            targetTypeString = "false";
+        }
         QString targetName=obj["targetName"].toString();
-        qDebug()<<"targetName"<<targetName;
         QString avatar=obj["avatar"].toString();
         QString message=obj["message"].toString();
         QString msgSender=obj["msgSender"].toString();
@@ -131,9 +138,65 @@ void FutClient::setHistoryBack(QJsonObject jsondata){
         //调用QML函数
         QVariant res;
         QObject* MainPage=root->findChild<QObject*>("MainPage_object");
-        qDebug()<<"MainPage"<<MainPage;
-        QMetaObject::invokeMethod(MainPage,"setHistoryBack",Q_RETURN_ARG(QVariant,res),Q_ARG(QVariant,targetName),Q_ARG(QVariant,avatar),Q_ARG(QVariant,message),Q_ARG(QVariant,msgSender),Q_ARG(QVariant,timestamp));
+        QMetaObject::invokeMethod(MainPage,"setHistoryBack",Q_RETURN_ARG(QVariant,res),Q_ARG(QVariant,targetName),Q_ARG(QVariant,avatar),Q_ARG(QVariant,message),Q_ARG(QVariant,msgSender),Q_ARG(QVariant,timestamp),Q_ARG(QVariant,targetTypeString),Q_ARG(QVariant,targetid));
     }
+    QObject* mainpage=root->findChild<QObject*>("MainPage_object");
+    qDebug()<<"mainpage"<<mainpage;
+    mainpageconnect(mainpage);
+}
+
+void FutClient::mainpageconnect(QObject *mainpage){
+    QObject::connect(mainpage,SIGNAL(createAddPage()),this,SLOT(createAddPagefunc()));
+    QObject::connect(mainpage,SIGNAL(createChatPage(QString,QString,QString)),this,SLOT(createChatPagefunc(QString,QString,QString)));
+}
+
+//初始化历史消息
+void FutClient::createChatPagefunc(QString clientId, QString targetId, QString targetType){
+    qDebug()<<"createChatPagefunc"<<clientId;
+    QJsonObject jsonobj;
+    jsonobj["request"] = "initChatWindow";
+    jsonobj["clientId"] = clientId;
+    jsonobj["targetId"] = targetId;
+    jsonobj["targetType"] = targetType;
+    QString jsonstring=QJsonDocument(jsonobj).toJson();
+    sendmsg(jsonstring);
+    qDebug()<<jsonstring;
+}
+
+void FutClient::createChatPageBack(QJsonObject jsondata){
+    QJsonArray jsonArray=jsondata["messages"].toArray();
+    QString targetTypeString;
+    QString targetid=jsondata["targetId"].toString();
+    bool targetType=jsondata["targetType"].toBool();
+    if(targetType){
+        targetTypeString = "true";
+    }else{
+        targetTypeString = "false";
+    }
+    for(int i=0;i<jsonArray.size();i++){
+        QJsonObject obj = jsonArray[i].toObject();
+        int senderId=obj["senderId"].toInt();
+        QString content=obj["content"].toString();
+        QString time=obj["time"].toString();
+        int type=obj["type"].toInt();
+        int status=obj["status"].toInt();
+        //调用QML函数
+        QVariant res;
+        QObject* chatPage=root->findChild<QObject*>("MainPage_object")->findChild<QObject*>("chatPage_object");
+        qDebug()<<"chatPage"<<chatPage;
+        QMetaObject::invokeMethod(chatPage,"createChatPageBack",Q_RETURN_ARG(QVariant,res),Q_ARG(QVariant,senderId),Q_ARG(QVariant,content),\
+                                  Q_ARG(QVariant,time),Q_ARG(QVariant,type),Q_ARG(QVariant,status));
+    }
+}
+
+//创建addpage指针
+void FutClient::createAddPagefunc(){
+    //调用QML函数
+    QVariant res;
+    QObject* mainpage=root->findChild<QObject*>("MainPage_object");
+    qDebug()<<"mainpage createAddPagefunc()"<<mainpage;
+    addPage=mainpage->findChild<QObject*>("addPage_object");
+    QMetaObject::invokeMethod(addPage,"createAddPage",Q_RETURN_ARG(QVariant,res));
 }
 
 //搜索陌生人
@@ -191,6 +254,17 @@ void FutClient::sendChatMessageBack(QJsonObject jsondata) {
                               Q_ARG(QVariant, content), Q_ARG(QVariant, time));
 }
 
+void FutClient::printNodeNames(QObject* item) {
+    QQuickItem* quickItem = qobject_cast<QQuickItem*>(item);
+    if (quickItem) {
+        qDebug() << "Node name:" << quickItem->objectName();
+    }
+
+    QObjectList children = item->children();
+    for (QObject* child : children) {
+        printNodeNames(child);
+    }
+}
 
 
 

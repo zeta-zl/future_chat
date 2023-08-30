@@ -10,6 +10,19 @@ FluWindow{
     width: 800
     height: 850
     title: qsTr("聊天")
+    objectName: "chatPage_object"
+
+    function createChatPageBack(senderId,content,time,type,status){
+        console.log("function createChatPageBack() ")
+        console.log(curuser.id)
+        if(senderId !== curuser.id){
+            chatModel.append({"username": "Bob", "avatar": "images/test2.jpg",
+                               "message": content,"self": false})
+        }else{
+            chatModel.append({"username": "Bob", "avatar": "images/test2.jpg",
+                               "message": content,"self": true})
+        }
+    }
 
     FluRectangle{ // 顶部条
         id: topRtg
@@ -43,7 +56,7 @@ FluWindow{
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 5
             text: {
-                if(model.groupmember){
+                if(model.isgroup){
                     model.groupmember + "人"
                 }
             }
@@ -114,20 +127,20 @@ FluWindow{
     ListModel { // 聊天记录列表
             id: chatModel
 
-            // 用户名； 头像； 新消息内容； 是否是自己(暂时以颜色区分)
-            ListElement {
-                username: "Alice"; avatar: "images/test2.jpg"; message: "1";
-                self: false
-            }
-            ListElement {
-                username: "Bob"; avatar: "images/test2.jpg"; message: "捂脸哭捂脸哭捂脸哭捂脸哭捂脸哭捂脸哭捂脸哭捂脸哭捂脸哭捂脸哭捂脸哭捂脸哭捂脸哭捂脸哭捂脸哭捂脸哭捂脸哭捂脸哭捂脸哭捂脸哭捂脸哭捂脸哭捂脸哭捂脸哭捂脸哭捂脸哭捂脸哭捂脸哭捂脸哭捂脸哭捂脸哭捂脸哭捂脸哭捂脸哭";
-                self: false
-            }
+//            // 用户名； 头像； 新消息内容； 是否是自己(暂时以颜色区分)
+//            ListElement {
+//                username: "Alice"; avatar: "images/test2.jpg"; message: "1";
+//                self: false
+//            }
+//            ListElement {
+//                username: "Bob"; avatar: "images/test2.jpg"; message: "捂脸哭捂脸哭捂脸哭捂脸哭捂脸哭捂脸哭捂脸哭捂脸哭捂脸哭捂脸哭捂脸哭捂脸哭捂脸哭捂脸哭捂脸哭捂脸哭捂脸哭捂脸哭捂脸哭捂脸哭捂脸哭捂脸哭捂脸哭捂脸哭捂脸哭捂脸哭捂脸哭捂脸哭捂脸哭捂脸哭捂脸哭捂脸哭捂脸哭捂脸哭";
+//                self: false
+//            }
 
-            ListElement {
-                username: "大黄5"; avatar: "images/test2.jpg"; message: "111";
-                self: false
-            }
+//            ListElement {
+//                username: "大黄5"; avatar: "images/test2.jpg"; message: "111";
+//                self: false
+//            }
     }
 
     FluRectangle { // 聊天记录区

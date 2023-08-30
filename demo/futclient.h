@@ -20,6 +20,8 @@ public:
     void sendmsg(QString msg);
     void receivemsg();
     void parsecommand( QJsonDocument jsonDoc );
+    void printNodeNames(QObject* item);
+    void mainpageconnect(QObject* mainpage);
 
     //c++ -> qml
     void loginBack( QJsonObject jsondata );
@@ -27,6 +29,7 @@ public:
     void addFriendBack( QJsonObject jsondata );
     void setHistoryBack( QJsonObject jsondata );
     void sendChatMessageBack(QJsonObject jsondata);
+    void createChatPageBack(QJsonObject jsondata);
 
 private:
     //前端通信engine
@@ -38,7 +41,8 @@ private:
     QHostAddress m_ip;
     //用户信息
     int clientid = -1;
-    QString name="小强";
+    //指针
+    QObject* addPage;
 
 private slots:
     void loginfunc(QString id,QString pwd);
@@ -47,8 +51,9 @@ private slots:
     void setHistoryfunc( int userid );
     void searchStrangerfunc(QString targetid,QString curid);
     void sendChatMessagefunc(QString clientId, QString targetId, QString targetType, QString content, QString time) ;
-signals:
-    void setHistoryBack();
+    void createAddPagefunc();
+    void createChatPagefunc(QString clientId, QString targetId, QString targetType);
+
 };
 
 #endif // FUTCLIENT_H
